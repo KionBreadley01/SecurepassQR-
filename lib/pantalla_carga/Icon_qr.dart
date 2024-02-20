@@ -29,8 +29,13 @@ class _IconSplashState extends State<Iconqr> {
           children: [ 
             Image.asset(
             'assets/images/logoqr.png',
-            width: 200,
+            width: 300,
             height: 200,
+          ), 
+          Image.asset(
+            'assets/images/ssssssssssssssssssssssssssssssss-removebg-preview (1).png',
+             width: 3000,
+            height: 400,
           ),
             const Text(
               "",
