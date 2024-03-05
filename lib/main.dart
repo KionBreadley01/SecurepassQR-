@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:securepassqr/pantalla_carga/Icon_qr.dart';
 
-
 void main() {
   runApp(const MyApp());
 }
