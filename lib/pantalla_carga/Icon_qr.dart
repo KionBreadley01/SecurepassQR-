@@ -1,53 +1,54 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:securepassqr/pantalla_carga/login_screen.dart';
 
 class Iconqr extends StatefulWidget {
-  const Iconqr({super.key});
+  const Iconqr({Key? key}) : super(key: key);
 
   @override
-  State<Iconqr> createState() => _IconSplashState();
+  State<Iconqr> createState() => _IconqrState();
 }
 
-class _IconSplashState extends State<Iconqr> {
+class _IconqrState extends State<Iconqr> {
   @override
   void initState() {
-    super.initState();
-    Timer(
-       const Duration(seconds: 5),
-        () => Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => const Iconqr())));
-  }
-
+  super.initState();
+  Timer(
+    const Duration(seconds: 2),
+    () => Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (BuildContext context) => const LoginScreen(),
+      ),
+    ),
+  );
+}
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [ 
+          children: [
             Image.asset(
-            'assets/images/logoqr.png',
-            width: 300,
-            height: 200,
-          ), 
-          Image.asset(
-            'assets/images/ssssssssssssssssssssssssssssssss-removebg-preview (1).png',
-             width: 3000,
-            height: 400,
-          ),
-            const Text(
-              "",
-              style: TextStyle(fontSize: 20),
+              'assets/images/logoqr.png',
+              width: 400,
+              height: 300,
             ),
-          const   Text(
-              "",
-              style: TextStyle(fontSize: 10),
-            )
+            SizedBox(
+              width: 150, // Ancho mediano
+              height: 150, // Altura mediana
+              child: Image.asset(
+                'assets/images/ssssssssssssssssssssssssssssssss-removebg-preview (2).png',
+                fit: BoxFit.scaleDown, // Ajusta la imagen al contenedor
+              ),
+            ),
           ],
         ),
-     ),
-);
+      ),
+    );
+  }
 }
-}
+
+
