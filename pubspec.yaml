@@ -10,10 +10,10 @@ dependencies:
   flutter:
     sdk: flutter
   mongo_dart: ^0.10.0
+  flutter_login: ^4.0.4
+  responsive_builder: ^0.4.0
+
   
-  flutter_login: ^4.0.4  # Asegúrate de usar la versión más reciente de flutter_login
-
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

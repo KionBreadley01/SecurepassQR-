@@ -1,3 +1,4 @@
+// ignore: file_names
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ class _IconqrState extends State<Iconqr> {
   void initState() {
   super.initState();
   Timer(
-    const Duration(seconds: 2),
+    const Duration(seconds: 7),
     () => Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (BuildContext context) => const LoginScreen(),
