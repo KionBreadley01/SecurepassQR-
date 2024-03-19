@@ -1,6 +1,5 @@
-// ignore: file_names
-import 'dart:async';
 
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:securepassqr/pantalla_carga/login_screen.dart';
 
@@ -16,7 +15,7 @@ class _IconqrState extends State<Iconqr> {
   void initState() {
   super.initState();
   Timer(
-    const Duration(seconds: 7),
+    const Duration(seconds: 2),
     () => Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (BuildContext context) => const LoginScreen(),
