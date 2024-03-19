@@ -123,21 +123,36 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 30.0),
                 // Botón para iniciar sesión
                 ElevatedButton(
-                  onPressed: () async {
-                    // String username = _usernameController.text;
-                    // String password = _passwordController.text;
-                    // bool isAuthenticated =
-                    //     await _mongoDBService.authenticate(username, password);
-                    // if (isAuthenticated) {
-                    // Navegar a la pantalla de información del estudiante si la autenticación es exitosa
-                    Future.delayed(const Duration(seconds: 4), () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const StudentInformation(),
-                        ),
-                      );
-                    });
+  onPressed: () async {
+    String username = _usernameController.text;
+    String password = _passwordController.text;
+    bool isAuthenticated = await _mongoDBService.authenticate(username, password);
+    if (isAuthenticated) {
+      // Navegar a la pantalla de información del estudiante si la autenticación es exitosa
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const StudentInformation(),
+        ),
+      );
+    } else {
+      setState(() {
+        _errorMessage = 'Authentication failed';
+        _usernameController.clear(); // Limpiar el campo de usuario
+        _passwordController.clear(); // Limpiar el campo de contraseña
+        _isPasswordVisible = false;  // Restablecer la visibilidad de la contraseña
+      });
+    }
+  },
+  child: const Text('Login'),
+  style: ElevatedButton.styleFrom(
+    primary: Color.fromARGB(255, 222, 164, 212),
+    onPrimary: Colors.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(40.0),
+    ),
+  ),
+),
 
                     // } else {
                     //   // Limpiar los campos de usuario y contraseña

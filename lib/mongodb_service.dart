@@ -8,14 +8,15 @@ class MongoDBService {
   }
 
   Future<void> _connect() async {
-    var client = Db("mongodb+srv://username:Don_gato01@cluster-url/dbname");
+    var client = Db('mongodb://root:@localhost:27017/SecurePassQR');
     await client.open();
     _db = client;
   }
 
   Future<bool> authenticateUser(String username, String password) async {
     var collection = _db.collection('alumnos');
-    var user = await collection.findOne(where.eq('username', username).eq('password', password));
+    var user = await collection.findOne(
+        where.eq('Usuario', username).eq('Contraseña', password));
     return user != null;
   }
 }
