@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   
   Widget build(BuildContext context) {
     return const MaterialApp(
-      title: 'Android Alians',
+      title: 'SecurePassQR',
       debugShowCheckedModeBanner: false,
       home: Iconqr(),
     );

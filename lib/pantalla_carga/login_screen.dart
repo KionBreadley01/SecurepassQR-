@@ -20,7 +20,7 @@ class MongoDBService {
               password)); // Buscar el usuario por correo y contraseña
       return result != null; // Si se encontró el usuario, retorna true
     } catch (e) {
-      print(
+      Text(
           'Error autenticando: $e'); // Imprimir el error si ocurre uno durante la autenticación
       return false; // Retornar false si ocurre un error
     } finally {
@@ -151,9 +151,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     // }
                   },
                   child: const Text('Login'),
+
                   style: ElevatedButton.styleFrom(
-                    primary: Color.fromARGB(255, 222, 164, 212),
+                    primary: Color.fromARGB(255, 183, 122, 173),
                     onPrimary: Colors.white,
+                    minimumSize: const Size(359.0, 50.0),
+                    elevation: 5.0,
+                    shadowColor: Colors.grey,
+                       
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(40.0),
                     ),
