@@ -2,7 +2,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:securepassqr/pantalla_carga/login_screen.dart';
-import 'package:securepassqr/pantalla_carga/signup_screen.dart';
 
 class Iconqr extends StatefulWidget {
   const Iconqr({Key? key}) : super(key: key);

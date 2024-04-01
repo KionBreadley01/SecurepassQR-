@@ -3,7 +3,6 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:securepassqr/pantalla_carga/about_screen.dart';
 import 'package:securepassqr/pantalla_carga/accesshistory_screen.dart';
 import 'package:securepassqr/pantalla_carga/login_screen.dart';
-import 'package:securepassqr/pantalla_carga/notification_screen.dart';
 
 class StudentInformation extends StatelessWidget {
   const StudentInformation({Key? key}) : super(key: key);
@@ -79,17 +78,7 @@ class StudentInformation extends StatelessWidget {
                     );
                   },
                 ),
-                 ListTile(
-                  title: const Text('Notificaciones'),
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const NotificationScreen(),
-                      ),
-                    );
-                  },
-                ),
+               
 
                 ListTile(
                   title: const Text('Acerca de'),
