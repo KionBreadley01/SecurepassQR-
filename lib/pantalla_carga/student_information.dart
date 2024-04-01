@@ -3,6 +3,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:securepassqr/pantalla_carga/about_screen.dart';
 import 'package:securepassqr/pantalla_carga/accesshistory_screen.dart';
 import 'package:securepassqr/pantalla_carga/login_screen.dart';
+import 'package:securepassqr/pantalla_carga/notification_screen.dart';
 
 class StudentInformation extends StatelessWidget {
   const StudentInformation({Key? key}) : super(key: key);
@@ -12,12 +13,10 @@ class StudentInformation extends StatelessWidget {
     // Datos del estudiante
     String nombre = 'Juan Manuel';
     String matricula = '20221DGS009';
-    //video para el trole de mañana despues quitalo
-    String videoUrl = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-
+   
     // Texto que se utilizará para generar el código QR
-    // String qrData = '$nombre, $matricula, $videoUrl';
-    String qrData = '    $videoUrl';
+    String qrData = '$nombre, $matricula, ';
+  
 
     return Scaffold(
       drawer: Drawer(
@@ -68,7 +67,30 @@ class StudentInformation extends StatelessWidget {
                               const AccessHistory()),
                     );
                   },
-                ),// Aquí van los elementos del Drawer que quieras en la parte superior
+                ),
+                 ListTile(
+                  title: const Text('Historial de accesos'),
+                  onTap: () {
+                     Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const AccessHistory()),
+                    );
+                  },
+                ),
+                 ListTile(
+                  title: const Text('Notificaciones'),
+                  onTap: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const NotificationScreen(),
+                      ),
+                    );
+                  },
+                ),
+
                 ListTile(
                   title: const Text('Acerca de'),
                   onTap: () {

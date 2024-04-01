@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "935488051699",
+    "firebase_url": "https://passqr-9141c-default-rtdb.firebaseio.com",
+    "project_id": "passqr-9141c",
+    "storage_bucket": "passqr-9141c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:935488051699:android:4c4be16c40b53f9cd5da86",
+        "android_client_info": {
+          "package_name": "com.example.securepassqr"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCypNE0-cEh-z-6xcNjvZvyDw1LG4oIcN0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
