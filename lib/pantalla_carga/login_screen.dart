@@ -21,31 +21,32 @@ class _LoginScreenState extends State<LoginScreen> {
   String _password = "";
   bool _isObscure = true;
 
-  void _handleLogin() async {
-    try {
-      UserCredential userCredential =
-          await _auth.signInWithEmailAndPassword(
-        email: _email,
-        password: _password,
-      );
-      print("Usuario logeado: ${userCredential.user!.email}");
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const StudentInformation(),
-        ),
-      );
-      // Aquí puedes navegar a la pantalla principal después del inicio de sesión
-    } catch (e) {
-      print("Error durante el inicio de sesión: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Error durante el inicio de sesión: $e"),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+ void _handleLogin() async {
+  try {
+    UserCredential userCredential =
+        await _auth.signInWithEmailAndPassword(
+      email: _email,
+      password: _password,
+    );
+    print("Usuario logeado: ${userCredential.user!.email}");
+    
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const StudentInformation(),
+      ),
+    );
+  } catch (e) {
+    print("Error durante el inicio de sesión: $e");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Error durante el inicio de sesión: $e"),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
+}
+
 
   void _togglePasswordVisibility() {
     setState(() {
@@ -56,12 +57,13 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: const Color.fromARGB(255, 224, 119, 208),
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Center(
-            child: SingleChildScrollView(
+      resizeToAvoidBottomInset: false, // Evita que el contenido se desplace hacia arriba cuando aparece el teclado
+      body: SingleChildScrollView( // Envuelve el contenido del Scaffold en SingleChildScrollView
+        child: Container(
+          color: const Color.fromARGB(255, 224, 119, 208),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Center(
               child: SizedBox(
                 height: MediaQuery.of(context).size.height,
                 width: 600,
@@ -110,6 +112,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     _email = value;
                                   });
                                 },
+                                  autocorrect: false,
+                                  autofillHints: const [AutofillHints.email],
                               ),
                               const SizedBox(height: 10.0),
                               TextFormField(
@@ -140,6 +144,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     _password = value;
                                   });
                                 },
+                                autocorrect: false,
+                                autofillHints: const [AutofillHints.password],
                               ),
                               const SizedBox(height: 16.0),
                               ElevatedButton(

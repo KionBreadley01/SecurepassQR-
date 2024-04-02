@@ -1,21 +1,23 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:securepassqr/pantalla_carga/about_screen.dart';
 import 'package:securepassqr/pantalla_carga/accesshistory_screen.dart';
 import 'package:securepassqr/pantalla_carga/login_screen.dart';
 import 'package:securepassqr/pantalla_carga/profile_screen.dart';
 import 'package:securepassqr/pantalla_carga/student_information.dart';
 
-class AboutScreen extends StatelessWidget {
-  const AboutScreen({super.key});
+class ViewProfileScreen extends StatelessWidget {
+  final String userId;
 
+  const ViewProfileScreen({Key? key, required this.userId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-  String email = 'admin@gmail.com'; // Email del usuario administrador
-  final isAdmin = FirebaseAuth.instance.currentUser?.email == email;
-
+    String email = 'admin@gmail.com'; // Email del usuario administrador // Verificar si el usuario actual es administrador
+    final isAdmin = FirebaseAuth.instance.currentUser?.email == email;
     return Scaffold(
-      drawer: Drawer(
+        drawer: Drawer(
         backgroundColor: const Color.fromARGB(255, 224, 119, 208),
         // Aquí van los elementos del Drawer
         child: Column(
@@ -41,32 +43,19 @@ class AboutScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
                   ),
-                ),
+                ), 
                 ListTile(
                   title: const Text('Home'),
-                   onTap: () {
-                     Navigator.pushReplacement(
+                  onTap: () {
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
                               const StudentInformation()),
                     );  
-                    // Acción para mostrar información sobre la aplicación
-                    // Puedes implementar aquí la lógica para mostrar una pantalla con información sobre la aplicación
                   },
                 ),
-                  ListTile(
-                  title: const Text('Historial de accesos'),
-                  onTap: () {
-                     Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              const AccessHistory()),
-                    );
-                  },
-                ),
-                 if (isAdmin) // Solo muestra la opción si el usuario es administrador
+                if (isAdmin) // Solo muestra la opción si el usuario es administrador
                   ListTile(
                     title: const Text('registrar usuario'),
                     onTap: () {
@@ -78,11 +67,21 @@ class AboutScreen extends StatelessWidget {
                       );
                     },
                   ),
-                 // Aquí van los elementos del Drawer que quieras en la parte superior
+                ListTile(
+                  title: const Text('Historial de accesos'),
+                  onTap: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const AccessHistory()),
+                    );
+                  },
+                ),
                 ListTile(
                   title: const Text('Acerca de'),
                   onTap: () {
-                     Navigator.pushReplacement(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
@@ -95,12 +94,11 @@ class AboutScreen extends StatelessWidget {
                 ListTile(
                   title: const Text('Problemas con mi información'),
                   onTap: () {
-                   
                     // Acción para mostrar información sobre la aplicación
                     // Puedes implementar aquí la lógica para mostrar una pantalla con información sobre la aplicación
                   },
                 ),
-                  ListTile(
+                ListTile(
                   title: const Text('XD'),
                   onTap: () {
                     // Acción para mostrar información sobre la aplicación
@@ -129,48 +127,57 @@ class AboutScreen extends StatelessWidget {
           ],
         ),
       ),
-      appBar: AppBar(
-        title: const Text('Acerca de',
-           style: TextStyle(color: Colors.white, fontSize: 24.0, fontWeight: FontWeight.bold),
-        ),
-           backgroundColor: const Color.fromARGB(255, 224, 119, 208),
-      ),
-      body: Padding(
-        padding: const  EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-             Image.asset(
-                    'assets/images/logoqr.png',
-                    fit: BoxFit.scaleDown,
-                    width: 200,
-                    height: 100,
-                  ),  
-            const  SizedBox(height: 20.0),
+      
+      body: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+        future: FirebaseFirestore.instance.collection('users').doc(userId).get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (snapshot.hasError) {
+            return const Center(
+              child: Text('Error al cargar los datos del usuario.'),
+            );
+          }
+          if (!snapshot.hasData || snapshot.data!.data() == null) {
+            return const Center(
+              child: Text('No se encontraron datos para este usuario.'),
+            );
+          }
 
-           const  Text(
-              '',
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+          final userData = snapshot.data!.data()!;
+
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Nombre: ${userData['firstName']} ${userData['lastName']}',
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Carrera: ${userData['career']}',
+                  style: const TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Matrícula: ${userData['registration']}',
+                  style: const TextStyle(fontSize: 16),
+                ),
+                 const SizedBox(height: 8),
+                Text(
+                  'Genero: ${userData['gender']}',
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ],
             ),
-          const    SizedBox(height: 10.0),
-          const   Text(
-              'Versión: 2.0.0 Aqua ' ,
-              style: TextStyle(fontSize: 18.0),
-            ),
-            const  SizedBox(height: 10.0),
-           const  Text(
-              'Desarrollado por: KionBredley',
-              style: TextStyle(fontSize: 18.0),
-            ),
-            const  SizedBox(height: 10.0),
-          const   Text(
-              'Descripción: SecurePassQR es una aplicación diseñada para  registrar el acceso de los usuarios de una institución academica .',
-              style: TextStyle(fontSize: 18.0),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 }
-
