@@ -124,14 +124,14 @@ class _SignupScreenState extends State<SignupScreen> {
                                 decoration: InputDecoration(
                                   hintText: 'Ingresa tu contraseña',
                                   labelText: 'Contraseña',
-                                  prefixIcon: Icon(Icons.lock),
+                                  prefixIcon: const Icon(Icons.lock),
                                   suffixIcon: IconButton(
                                     onPressed: _togglePasswordVisibility,
                                     icon: Icon(
                                       _isObscure ? Icons.visibility : Icons.visibility_off,
                                     ),
                                   ),
-                                  border: OutlineInputBorder(
+                                  border: const OutlineInputBorder(
                                     borderRadius: BorderRadius.all(Radius.circular(20.0)),
                                   ),
                                 ),

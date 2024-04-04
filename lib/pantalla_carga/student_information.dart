@@ -1,18 +1,36 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:securepassqr/pantalla_carga/about_screen.dart';
 import 'package:securepassqr/pantalla_carga/accesshistory_screen.dart';
+import 'package:securepassqr/pantalla_carga/helpcanter_screen.dart';
 import 'package:securepassqr/pantalla_carga/login_screen.dart';
 import 'package:securepassqr/pantalla_carga/profile_screen.dart';
+import 'package:url_launcher/url_launcher.dart'; // Importa la biblioteca url_launcher
 
 class StudentInformation extends StatelessWidget {
   const StudentInformation({Key? key}) : super(key: key);
 
+// Función para abrir el correo electrónico en la aplicación de Gmail
+  void _launchEmail() async {
+    const emailAddress = 'securepassqr@gmail.com';
+    final Uri _emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: emailAddress,
+    );
+    if (await canLaunch(_emailLaunchUri.toString())) {
+      await launch(_emailLaunchUri.toString());
+    } else {
+      throw 'Could not launch ${_emailLaunchUri.toString()}';
+    }
+  }
+  
+
   @override
   Widget build(BuildContext context) {
-    String email = 'admin@gmail.com'; // Email del usuario administrador // Verificar si el usuario actual es administrador
+    String email =
+        'admin@gmail.com'; // Email del usuario administrador // Verificar si el usuario actual es administrador
     final isAdmin = FirebaseAuth.instance.currentUser?.email == email;
     return Scaffold(
       drawer: Drawer(
@@ -39,76 +57,86 @@ class StudentInformation extends StatelessWidget {
                   child: const Text(
                     'Menu',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+                    style:
+                        TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
                   ),
-                ), 
+                ),
                 ListTile(
+                  title: const Text(
+                    '',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10.0),
+                  ),
+                  subtitle: Text(
+                    FirebaseAuth.instance.currentUser!.email!,
+                    style: const TextStyle(color: Colors.black, fontSize: 16.0),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.home), // Icono para Home
                   title: const Text('Home'),
                   onTap: () {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              const StudentInformation()),
-                    );  
+                          builder: (context) => const StudentInformation()),
+                    );
                   },
                 ),
                 if (isAdmin) // Solo muestra la opción si el usuario es administrador
                   ListTile(
-                    title: const Text('registrar usuario'),
+                    leading: const Icon(Icons.person_add),
+                    title: const Text('Registrar Usuario'),
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                const ProfileScreen()),
+                            builder: (context) => const ProfileScreen()),
                       );
                     },
                   ),
                 ListTile(
-                  title: const Text('Historial de accesos'),
+                  leading: const Icon(Icons.history),
+                  title: const Text('Historial de Accesos'),
                   onTap: () {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              const AccessHistory()),
+                          builder: (context) => const AccessHistory()),
                     );
                   },
                 ),
                 ListTile(
-                  title: const Text('Acerca de'),
+                  leading: const Icon(Icons.info),
+                  title: const Text('Información de la App'),
                   onTap: () {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              const AboutScreen()),
-                    ); 
-                    // Acción para mostrar información sobre la aplicación
-                    // Puedes implementar aquí la lógica para mostrar una pantalla con información sobre la aplicación
+                          builder: (context) => const AboutScreen()),
+                    );
                   },
                 ),
                 ListTile(
-                  title: const Text('Problemas con mi información'),
+                  leading: const Icon(Icons.help),
+                  title: const Text('Centro de Ayuda'),
                   onTap: () {
-                    // Acción para mostrar información sobre la aplicación
-                    // Puedes implementar aquí la lógica para mostrar una pantalla con información sobre la aplicación
-                  },
-                ),
-                ListTile(
-                  title: const Text('XD'),
-                  onTap: () {
-                    // Acción para mostrar información sobre la aplicación
-                    // Puedes implementar aquí la lógica para mostrar una pantalla con información sobre la aplicación
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const HelpCenterScreen()),
+                    );
                   },
                 ),
               ],
             ),
             Column(
               children: [
-                // Aquí van los elementos del Drawer que quieras en la parte inferior
                 ListTile(
+                  leading: const Icon(Icons.logout),
                   title: const Text('Cerrar Sesión'),
                   onTap: () {
                     // Acción para cerrar sesión
@@ -128,7 +156,8 @@ class StudentInformation extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'Información del Estudiante',
-          style: TextStyle(color: Colors.white, fontSize: 24.0, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: Colors.white, fontSize: 24.0, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color.fromARGB(255, 224, 119, 208),
       ),
@@ -139,7 +168,10 @@ class StudentInformation extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                future: FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get(),
+                future: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                    .get(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
@@ -153,14 +185,16 @@ class StudentInformation extends StatelessWidget {
                   }
                   if (!snapshot.hasData || snapshot.data!.data() == null) {
                     return const Center(
-                      child: Text('No se encontraron datos para este estudiante.'),
+                      child:
+                          Text('No se encontraron datos para este estudiante.'),
                     );
                   }
 
                   final userData = snapshot.data!.data()!;
 
                   // Texto que se utilizará para generar el código QR
-                  String qrData = '${userData['firstName']} ${userData['lastName']}, ${userData['registration']}, ${userData['career']}, ${userData['gender']}';
+                  String qrData =
+                      '${userData['firstName']} ${userData['lastName']}, ${userData['registration']}, ${userData['career']}, ${userData['gender']}';
 
                   return Column(
                     children: [
@@ -173,7 +207,8 @@ class StudentInformation extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16.0, vertical: 10.0),
                               child: Text(
                                 'Detalles del Estudiante',
                                 style: TextStyle(
@@ -187,36 +222,57 @@ class StudentInformation extends StatelessWidget {
                             ListTile(
                               title: const Text(
                                 'Nombre(s):',
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18.0),
                               ),
-                              subtitle: Text('${userData['firstName']} ${userData['lastName']}', style: const TextStyle(fontSize: 16.0)),
+                              subtitle: Text(
+                                '${userData['firstName']} ${userData['lastName']}',
+                                style: const TextStyle(fontSize: 16.0),
+                              ),
                             ),
                             const Divider(),
                             ListTile(
                               title: const Text(
                                 'Matrícula:',
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18.0),
                               ),
-                              subtitle: Text(userData['registration'], style:const TextStyle(fontSize: 16.0)),
+                              subtitle: Text(
+                                userData['registration'],
+                                style: const TextStyle(fontSize: 16.0),
+                              ),
                             ),
                             const Divider(),
                             ListTile(
                               title: const Text(
                                 'Carrera:',
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18.0),
                               ),
-                              subtitle: Text(userData['career'], style: TextStyle(fontSize: 16.0)),
+                              subtitle: Text(
+                                userData['career'],
+                                style: const TextStyle(fontSize: 16.0),
+                              ),
                             ),
                             const Divider(),
                             ListTile(
                               title: const Text(
                                 'Género:',
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18.0),
                               ),
-                              subtitle: Text(userData['gender'], style: TextStyle(fontSize: 16.0)),
+                              subtitle: Text(
+                                userData['gender'],
+                                style: const TextStyle(fontSize: 16.0),
+                              ),
                             ),
                             const SizedBox(
-                                height: 10.0), // Añadimos espacio adicional al final
+                                height:
+                                    10.0), // Añadimos espacio adicional al final
                           ],
                         ),
                       ),

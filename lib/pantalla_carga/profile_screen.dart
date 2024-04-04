@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:securepassqr/pantalla_carga/about_screen.dart';
 import 'package:securepassqr/pantalla_carga/accesshistory_screen.dart';
+import 'package:securepassqr/pantalla_carga/helpcanter_screen.dart';
 import 'package:securepassqr/pantalla_carga/login_screen.dart';
 import 'package:securepassqr/pantalla_carga/student_information.dart';
 import 'package:securepassqr/pantalla_carga/view_profile.dart';
@@ -24,9 +25,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _lastName = '';
   String _career = '';
   String _registration = '';
-  String _gender = ''; // Nuevo campo agregado
+  String _gender = '';
 
   List<String> _userIds = [];
+  Map<String, String> _userEmails = {};
 
   @override
   void initState() {
@@ -46,26 +48,78 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _lastName = userData['lastName'] ?? '';
         _career = userData['career'] ?? '';
         _registration = userData['registration'] ?? '';
-        _gender = userData['gender'] ?? ''; // Actualiza el género del usuario
+        _gender = userData['gender'] ?? '';
       });
     }
   }
 
   Future<void> _saveUserData() async {
     if (_selectedUserId.isNotEmpty) {
-      await _firestore.collection('users').doc(_selectedUserId).set({
-        'firstName': _firstName,
-        'lastName': _lastName,
-        'career': _career,
-        'registration': _registration,
-        'gender': _gender, // Guarda también el género del usuario
-      });
+      final DocumentSnapshot<Map<String, dynamic>> snapshot =
+          await _firestore.collection('users').doc(_selectedUserId).get();
+      final userData = snapshot.data();
+
+      if (userData != null) {
+        final Map<String, dynamic> updatedData = {
+          'firstName':
+              _firstName.isNotEmpty ? _firstName : userData['firstName'],
+          'lastName': _lastName.isNotEmpty ? _lastName : userData['lastName'],
+          'career': _career.isNotEmpty ? _career : userData['career'],
+          'registration': _registration.isNotEmpty
+              ? _registration
+              : userData['registration'],
+          'gender': _gender.isNotEmpty ? _gender : userData['gender'],
+          'email':
+              userData['email'], // Mantener el correo electrónico sin cambios
+        };
+
+        await _firestore
+            .collection('users')
+            .doc(_selectedUserId)
+            .update(updatedData);
+      }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Seleccione un usuario para guardar la información.'),
-        ),
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Aviso'),
+            content: const Text(
+                'Por favor seleccione un usuario para guardar la información.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Aceptar'),
+              ),
+            ],
+          );
+        },
       );
+    }
+  }
+
+  Future<void> _deleteUserData() async {
+    final DocumentSnapshot<Map<String, dynamic>> snapshot =
+        await _firestore.collection('users').doc(_selectedUserId).get();
+    final userData = snapshot.data();
+
+    if (userData != null) {
+      final Map<String, dynamic> updatedData = {
+        'firstName': '',
+        'lastName': '',
+        'career': '',
+        'registration': '',
+        'gender': '',
+        'email':
+            userData['email'], // Mantener el correo electrónico sin cambios
+      };
+
+      await _firestore
+          .collection('users')
+          .doc(_selectedUserId)
+          .update(updatedData);
     }
   }
 
@@ -73,15 +127,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final users = await _firestore.collection('users').get();
     setState(() {
       _userIds = users.docs.map((doc) => doc.id).toList();
+      _userEmails = Map.fromIterable(users.docs,
+          key: (doc) => doc.id, value: (doc) => doc.data()?['email'] ?? '');
     });
   }
 
   @override
   Widget build(BuildContext context) {
-      String email = 'admin@gmail.com'; // Email del usuario administrador // Verificar si el usuario actual es administrador
+    String email = 'admin@gmail.com';
     final isAdmin = FirebaseAuth.instance.currentUser?.email == email;
     return Scaffold(
-        drawer: Drawer(
+      drawer: Drawer(
         backgroundColor: const Color.fromARGB(255, 224, 119, 208),
         // Aquí van los elementos del Drawer
         child: Column(
@@ -105,76 +161,85 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: const Text(
                     'Menu',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+                    style:
+                        TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
                   ),
-                ), 
+                ),
                 ListTile(
+                  title: const Text(
+                    '',
+                    style: 
+                        TextStyle( color: Colors.black, fontWeight: FontWeight.bold, fontSize: 10.0),
+                  ),
+                  subtitle: Text(
+                    FirebaseAuth.instance.currentUser!.email!,
+                    style: const TextStyle( color: Colors.black ,fontSize: 16.0),
+                    textAlign: TextAlign.center,
+                    
+                  ),
+                ),
+                ListTile(
+                    leading: const Icon(Icons.home), // Icono para Home
                   title: const Text('Home'),
                   onTap: () {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              const StudentInformation()),
-                    );  
+                          builder: (context) => const StudentInformation()),
+                    );
                   },
                 ),
                 if (isAdmin) // Solo muestra la opción si el usuario es administrador
                   ListTile(
-                    title: const Text('registrar usuario'),
+                    leading: const Icon(Icons.person_add),
+                    title: const Text('Registrar Usuario'),
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                const ProfileScreen()),
+                            builder: (context) => const ProfileScreen()),
                       );
                     },
                   ),
                 ListTile(
-                  title: const Text('Historial de accesos'),
+                  leading: const Icon(Icons.history),
+                  title: const Text('Historial de Accesos'),
                   onTap: () {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              const AccessHistory()),
+                          builder: (context) => const AccessHistory()),
                     );
                   },
                 ),
                 ListTile(
-                  title: const Text('Acerca de'),
+                  leading: const Icon(Icons.info),
+                  title: const Text('Información de la App'),
                   onTap: () {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              const AboutScreen()),
-                    ); 
-                    // Acción para mostrar información sobre la aplicación
-                    // Puedes implementar aquí la lógica para mostrar una pantalla con información sobre la aplicación
+                          builder: (context) => const AboutScreen()),
+                    );
                   },
                 ),
                 ListTile(
-                  title: const Text('Problemas con mi información'),
+                  leading: const Icon(Icons.help),
+                  title: const Text('Centro de Ayuda'),
                   onTap: () {
-                    // Acción para mostrar información sobre la aplicación
-                    // Puedes implementar aquí la lógica para mostrar una pantalla con información sobre la aplicación
-                  },
-                ),
-                ListTile(
-                  title: const Text('XD'),
-                  onTap: () {
-                    // Acción para mostrar información sobre la aplicación
-                    // Puedes implementar aquí la lógica para mostrar una pantalla con información sobre la aplicación
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const HelpCenterScreen()),
+                    );
                   },
                 ),
               ],
             ),
             Column(
               children: [
-                // Aquí van los elementos del Drawer que quieras en la parte inferior
                 ListTile(
+                  leading: const Icon(Icons.logout),
                   title: const Text('Cerrar Sesión'),
                   onTap: () {
                     // Acción para cerrar sesión
@@ -192,100 +257,167 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
       appBar: AppBar(
-        title: const Text('Perfil de Usuario'),
+        title: const Text(
+          'Perfil de Usuario',
+          style: TextStyle(
+              color: Colors.white, fontSize: 24.0, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: const Color.fromARGB(255, 224, 119, 208),
       ),
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(8),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Seleciones le correo recien registrado '
+                'Recuerda que solo podras ver los correos de los usuarios registrados',
+                style: TextStyle(fontSize: 16.0),
               ),
-              child: DropdownButton<String>(
-                value: _selectedUserId.isNotEmpty ? _selectedUserId : null,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedUserId = newValue ?? '';
-                    _loadUserData();
-                  });
-                },
-                items: _userIds.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                      color: const Color.fromARGB(255, 224, 119, 208),
+                      width: 2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: DropdownButton<String>(
+                  value: _selectedUserId.isNotEmpty ? _selectedUserId : null,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedUserId = newValue ?? '';
+                      _loadUserData();
+                    });
+                  },
+                  items: _userIds.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(_userEmails[value] ?? ''),
+                    );
+                  }).toList(),
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              initialValue: _firstName,
-              decoration: const InputDecoration(
-                labelText: 'Nombre',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 16),
+              TextFormField(
+                initialValue: _firstName,
+                decoration: const InputDecoration(
+                  labelText: 'Nombre',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) => _firstName = value,
               ),
-              onChanged: (value) => _firstName = value,
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              initialValue: _lastName,
-              decoration: const InputDecoration(
-                labelText: 'Apellido',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 16),
+              TextFormField(
+                initialValue: _lastName,
+                decoration: const InputDecoration(
+                  labelText: 'Apellido',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) => _lastName = value,
               ),
-              onChanged: (value) => _lastName = value,
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              initialValue: _career,
-              decoration: const InputDecoration(
-                labelText: 'Carrera',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 16),
+              TextFormField(
+                initialValue: _career,
+                decoration: const InputDecoration(
+                  labelText: 'Carrera',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) => _career = value,
               ),
-              onChanged: (value) => _career = value,
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              initialValue: _registration,
-              decoration: const InputDecoration(
-                labelText: 'Matrícula',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 16),
+              TextFormField(
+                initialValue: _registration,
+                decoration: const InputDecoration(
+                  labelText: 'Matrícula',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) => _registration = value,
               ),
-              onChanged: (value) => _registration = value,
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              initialValue: _gender,
-              decoration: const InputDecoration(
-                labelText: 'Género', // Etiqueta para el campo de género
-                border: OutlineInputBorder(),
+              const SizedBox(height: 16),
+              TextFormField(
+                initialValue: _gender,
+                decoration: const InputDecoration(
+                  labelText: 'Género',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) => _gender = value,
               ),
-              onChanged: (value) => _gender = value, // Actualiza el género
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _saveUserData,
-              child: const Text('Guardar'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        ViewProfileScreen(userId: _selectedUserId),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_selectedUserId.isNotEmpty) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ViewProfileScreen(userId: _selectedUserId),
+                          ),
+                        );
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Aviso'),
+                              content: const Text(
+                                  'Por favor seleccione un usuario para ver el perfil.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Aceptar'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    },
+                    child: const Text('Ver Perfil'),
                   ),
-                );
-              },
-              child: const Text('Ver Perfil'),
-            )
-          ],
+                  const SizedBox(width: 20), // Espacio entre botones
+                  ElevatedButton(
+                    onPressed: _saveUserData,
+                    child: const Text('Guardar'),
+                  ),
+                  const SizedBox(width: 20), // Espacio entre botones
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_selectedUserId.isNotEmpty) {
+                        _deleteUserData();
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Aviso'),
+                              content: const Text(
+                                  'Por favor seleccione un usuario para eliminar los datos.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Aceptar'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    },
+                    child: const Text('Eliminar Datos'),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
