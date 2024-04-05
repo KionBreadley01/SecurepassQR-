@@ -7,6 +7,8 @@ import 'package:securepassqr/pantalla_carga/helpcanter_screen.dart';
 import 'package:securepassqr/pantalla_carga/login_screen.dart';
 import 'package:securepassqr/pantalla_carga/student_information.dart';
 import 'package:securepassqr/pantalla_carga/view_profile.dart';
+import 'package:securepassqr/pantalla_carga/Menuadmin_screen.dart';
+
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -178,17 +180,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     
                   ),
                 ),
-                ListTile(
-                    leading: const Icon(Icons.home), // Icono para Home
-                  title: const Text('Home'),
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const StudentInformation()),
-                    );
-                  },
-                ),
+              ListTile(
+  leading: const Icon(Icons.home), // Icono para Home
+  title: const Text('Home'),
+  onTap: () {
+    if (FirebaseAuth.instance.currentUser?.email == 'admin@gmail.com') {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const MenuAdmin(), // Reemplaza MenuAdmin con el nombre de tu pantalla para administradores
+        ),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const StudentInformation(),
+        ),
+      );
+    }
+  },
+),
+
                 if (isAdmin) // Solo muestra la opción si el usuario es administrador
                   ListTile(
                     leading: const Icon(Icons.person_add),
