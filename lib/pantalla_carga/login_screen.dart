@@ -1,9 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:securepassqr/pantalla_carga/forgotpassword_screen.dart';
-import 'package:securepassqr/pantalla_carga/signup_screen.dart';
+import 'package:securepassqr/pantalla_carga/menuadmin_screen.dart';
 import 'package:securepassqr/pantalla_carga/student_information.dart';
+import 'package:securepassqr/pantalla_carga/termsandconditions.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -30,13 +30,19 @@ class _LoginScreenState extends State<LoginScreen> {
         password: _password,
       );
       print("Usuario logeado: ${userCredential.user!.email}");
-    
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const StudentInformation(),
-        ),
-      );
+
+      // Verifica si el correo electrónico es el del administrador
+      if (_email == 'admin@gmail.com') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const MenuAdmin()), // Redirige a MenuAdmin
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const StudentInformation()), // Redirige a StudentInformation
+        );
+      }
     } catch (e) {
       print("Error durante el inicio de sesión: $e");
       ScaffoldMessenger.of(context).showSnackBar(
@@ -159,7 +165,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 child: const Text(
                                   'Iniciar sesión',
-                                  style: TextStyle(fontSize: 18.0),
+                                  style: TextStyle(fontSize: 20.0,),
+
                                 ),
                               ),
                               const SizedBox(height: 8.0),
@@ -175,17 +182,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                   style: TextStyle(color: Colors.blue),
                                 ),
                               ),
-                              const SizedBox(height: 16.0),
                               TextButton(
                                 onPressed: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => const SignupScreen()),
+                                    MaterialPageRoute(builder: (context) => const TermsAndConditionsScreen()), // Redirige a TermsAndConditionsScreen
                                   );
                                 },
                                 child: const Text(
-                                  'Registrarse',
-                                  style: TextStyle(color: Colors.green),
+                                  'Políticas y Condiciones',
+                                  style: TextStyle(color: Colors.black),
                                 ),
                               ),
                             ],

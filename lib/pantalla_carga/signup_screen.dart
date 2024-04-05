@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:securepassqr/pantalla_carga/login_screen.dart';
+import 'package:securepassqr/pantalla_carga/menuadmin_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -172,6 +173,19 @@ class _SignupScreenState extends State<SignupScreen> {
                                 },
                                 child: const Text(
                                   '¿Ya tienes una cuenta? Inicia sesión',
+                                  style: TextStyle(color: Colors.blue),
+                                ),
+                              ),
+                               const SizedBox(height: 8.0),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const MenuAdmin()),
+                                  );
+                                },
+                                child: const Text(
+                                  'Menu de Administrador',
                                   style: TextStyle(color: Colors.blue),
                                 ),
                               ),

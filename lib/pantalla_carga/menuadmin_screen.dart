@@ -2,26 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:securepassqr/pantalla_carga/about_screen.dart';
 import 'package:securepassqr/pantalla_carga/accesshistory_screen.dart';
+import 'package:securepassqr/pantalla_carga/helpcanter_screen.dart';
 import 'package:securepassqr/pantalla_carga/login_screen.dart';
 import 'package:securepassqr/pantalla_carga/profile_screen.dart';
+import 'package:securepassqr/pantalla_carga/signup_screen.dart';
 import 'package:securepassqr/pantalla_carga/student_information.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-class HelpCenterScreen extends StatelessWidget {
-  const HelpCenterScreen({Key? key}) : super(key: key);
-
-  void _launchEmail() async {
-    const emailAddress = 'securepassqr@gmail.com';
-    final Uri _emailLaunchUri = Uri(
-      scheme: 'mailto',
-      path: emailAddress,
-    );
-    if (await canLaunch(_emailLaunchUri.toString())) {
-      await launch(_emailLaunchUri.toString());
-    } else {
-      throw 'Could not launch ${_emailLaunchUri.toString()}';
-    }
-  }
+class MenuAdmin extends StatelessWidget {
+  const MenuAdmin({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +19,11 @@ class HelpCenterScreen extends StatelessWidget {
     return Scaffold(
       drawer: Drawer(
         backgroundColor: const Color.fromARGB(255, 224, 119, 208),
+        // Aquí van los elementos del Drawer
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // Aquí van los elementos del Drawer
             Column(
               children: [
                 SizedBox(
@@ -70,18 +60,17 @@ class HelpCenterScreen extends StatelessWidget {
                   ),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.home),
+                  leading: const Icon(Icons.home), // Icono para Home
                   title: const Text('Home'),
                   onTap: () {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const StudentInformation(),
-                      ),
+                          builder: (context) => const StudentInformation()),
                     );
                   },
                 ),
-                if (isAdmin)
+                if (isAdmin) // Solo muestra la opción si el usuario es administrador
                   ListTile(
                     leading: const Icon(Icons.person_add),
                     title: const Text('Registrar Usuario'),
@@ -89,8 +78,7 @@ class HelpCenterScreen extends StatelessWidget {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ProfileScreen(),
-                        ),
+                            builder: (context) => const ProfileScreen()),
                       );
                     },
                   ),
@@ -101,8 +89,7 @@ class HelpCenterScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const AccessHistory(),
-                      ),
+                          builder: (context) => const AccessHistory()),
                     );
                   },
                 ),
@@ -113,8 +100,7 @@ class HelpCenterScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const AboutScreen(),
-                      ),
+                          builder: (context) => const AboutScreen()),
                     );
                   },
                 ),
@@ -125,8 +111,7 @@ class HelpCenterScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const HelpCenterScreen(),
-                      ),
+                          builder: (context) => const HelpCenterScreen()),
                     );
                   },
                 ),
@@ -138,11 +123,12 @@ class HelpCenterScreen extends StatelessWidget {
                   leading: const Icon(Icons.logout),
                   title: const Text('Cerrar Sesión'),
                   onTap: () {
+                    // Acción para cerrar sesión
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const LoginScreen(),
-                      ),
+                          builder: (context) =>
+                              const LoginScreen()), // Reemplaza LoginScreen con el nombre de tu pantalla de inicio de sesión
                     );
                   },
                 ),
@@ -153,77 +139,50 @@ class HelpCenterScreen extends StatelessWidget {
       ),
       appBar: AppBar(
         title: const Text(
-          'Centro de Ayuda',
+          'Menu de Administrador',
           style: TextStyle(
               color: Colors.white, fontSize: 24.0, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color.fromARGB(255, 224, 119, 208),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(height: 20.0),
-            const Text(
-              'Bienvenido al Centro de Ayuda',
-              style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SignupScreen()),
+                );
+              },
+              icon: const Icon(Icons.person_add, size: 48.0),
+              label: const Text('Sign Up'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.all(20.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
             ),
             const SizedBox(height: 20.0),
-            const Text(
-              'Aquí encontrarás ayuda para resolver tus dudas y problemas.',
-              style: TextStyle(fontSize: 18.0),
-              textAlign: TextAlign.center,
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ProfileScreen()),
+                );
+              },
+              icon: const Icon(Icons.account_circle, size: 48.0),
+              label: const Text('Profile'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.all(20.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
             ),
-            const SizedBox(height: 20.0),
-            const Text(
-              'Problemas Comunes:',
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 10.0),
-            const Text(
-              '1. Información errónea en la aplicación.',
-              style: TextStyle(fontSize: 16.0),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 10.0),
-            const Text(
-              '2. Dificultades al realizar ciertas acciones.',
-              style: TextStyle(fontSize: 16.0),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 10.0),
-            const Text(
-              '3. Problemas de conexión con el servidor.',
-              style: TextStyle(fontSize: 16.0),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 20.0),
-            const Text(
-              'Para obtener ayuda adicional, contáctanos en:',
-              style: TextStyle(fontSize: 18.0),
-              textAlign: TextAlign.center,
-            ),
-        Padding(
-  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0), // Ajusta el padding según sea necesario
-  child: GestureDetector(
-    onTap: _launchEmail, // Llama a la función _launchEmail al hacer clic
-    child: const Flex(
-      direction: Axis.horizontal,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(Icons.email, color: Colors.blue), // Icono
-        SizedBox(width: 4.0), // Espacio entre el icono y el texto
-        Text(
-          'Correo electrónico: securepassqr@gmail.com',
-          style: TextStyle(fontSize: 14.0, color: Colors.blue), // Estilo del texto
-        ),
-      ],
-    ),
-  ),
-),
           ],
         ),
       ),
