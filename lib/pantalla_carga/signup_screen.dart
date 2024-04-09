@@ -185,7 +185,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   );
                                 },
                                 child: const Text(
-                                  'Menu de Administrador',
+                                  'Menu del Administrador',
                                   style: TextStyle(color: Colors.blue),
                                 ),
                               ),

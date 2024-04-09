@@ -24,8 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _handleLogin() async {
     try {
-      UserCredential userCredential =
-          await _auth.signInWithEmailAndPassword(
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: _email,
         password: _password,
       );
@@ -35,12 +34,15 @@ class _LoginScreenState extends State<LoginScreen> {
       if (_email == 'admin@gmail.com') {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const MenuAdmin()), // Redirige a MenuAdmin
+          MaterialPageRoute(
+              builder: (context) => const MenuAdmin()), // Redirige a MenuAdmin
         );
       } else {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const StudentInformation()), // Redirige a StudentInformation
+          MaterialPageRoute(
+              builder: (context) =>
+                  const StudentInformation()), // Redirige a StudentInformation
         );
       }
     } catch (e) {
@@ -63,143 +65,150 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      backgroundColor: const Color.fromARGB(255, 224, 119, 208),
       body: SingleChildScrollView(
         child: Container(
-          color: const Color.fromARGB(255, 224, 119, 208),
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Center(
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height,
-                width: 600,
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  margin: const EdgeInsets.all(16.0),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 300,
-                          height: 200,
-                          child: Image.asset(
-                            'assets/images/logoqr.png',
-                          ),
-                        ),
-                        const SizedBox(height: 20.0),
-                        Form(
-                          key: _formKey,
-                          child: Column(
-                            children: [
-                              TextFormField(
-                                controller: _emailController,
-                                keyboardType: TextInputType.emailAddress,
-                                decoration: const InputDecoration(
-                                  hintText: 'Ingresa tu correo electrónico',
-                                  labelText: 'Correo electrónico',
-                                  prefixIcon: Icon(Icons.email),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                                  ),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Por favor ingresa tu correo electrónico';
-                                  }
-                                  return null;
-                                },
-                                onChanged: (value) {
-                                  setState(() {
-                                    _email = value;
-                                  });
-                                },
-                                  autocorrect: false,
-                                  autofillHints: const [AutofillHints.email],
-                              ),
-                              const SizedBox(height: 10.0),
-                              TextFormField(
-                                controller: _passwordController,
-                                obscureText: _isObscure,
-                                decoration: InputDecoration(
-                                  hintText: 'Ingresa tu contraseña',
-                                  labelText: 'Contraseña',
-                                  prefixIcon: const Icon(Icons.lock),
-                                  suffixIcon: IconButton(
-                                    onPressed: _togglePasswordVisibility,
-                                    icon: Icon(
-                                      _isObscure ? Icons.visibility : Icons.visibility_off,
-                                    ),
-                                  ),
-                                  border: const OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                                  ),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Por favor ingresa tu contraseña';
-                                  }
-                                  return null;
-                                },
-                                onChanged: (value) {
-                                  setState(() {
-                                    _password = value;
-                                  });
-                                },
-                                autocorrect: false,
-                                autofillHints: const [AutofillHints.password],
-                              ),
-                              const SizedBox(height: 16.0),
-                              ElevatedButton(
-                                onPressed: () async {
-                                  if (_formKey.currentState!.validate()) {
-                                    _handleLogin();
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                                ),
-                                child: const Text(
-                                  'Iniciar sesión',
-                                  style: TextStyle(fontSize: 20.0,),
-
-                                ),
-                              ),
-                              const SizedBox(height: 8.0),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
-                                  );
-                                },
-                                child: const Text(
-                                  '¿Olvidaste tu contraseña?',
-                                  style: TextStyle(color: Colors.blue),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => const TermsAndConditionsScreen()), // Redirige a TermsAndConditionsScreen
-                                  );
-                                },
-                                child: const Text(
-                                  'Políticas y Condiciones',
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+          padding: const EdgeInsets.all(10.0),
+          child: Center(
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              margin: const EdgeInsets.all(16.0),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      height: MediaQuery.of(context).size.height * 0.2,
+                      child: Image.asset(
+                        'assets/images/logoqr.png',
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 20.0),
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.7,
+                            child: TextFormField(
+                              controller: _emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: const InputDecoration(
+                                hintText: 'Ingresa tu correo electrónico',
+                                labelText: 'Correo electrónico',
+                                prefixIcon: Icon(Icons.email),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Por favor ingresa tu correo electrónico';
+                                }
+                                return null;
+                              },
+                              onChanged: (value) {
+                                setState(() {
+                                  _email = value;
+                                });
+                              },
+                              autocorrect: false,
+                              autofillHints: const [AutofillHints.email],
+                            ),
+                          ),
+                          const SizedBox(height: 10.0),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.7,
+                            child: TextFormField(
+                              controller: _passwordController,
+                              obscureText: _isObscure,
+                              decoration: InputDecoration(
+                                hintText: 'Ingresa tu contraseña',
+                                labelText: 'Contraseña',
+                                prefixIcon: const Icon(Icons.lock),
+                                suffixIcon: IconButton(
+                                  onPressed: _togglePasswordVisibility,
+                                  icon: Icon(
+                                    _isObscure
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                  ),
+                                ),
+                                border: const OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Por favor ingresa tu contraseña';
+                                }
+                                return null;
+                              },
+                              onChanged: (value) {
+                                setState(() {
+                                  _password = value;
+                                });
+                              },
+                              autocorrect: false,
+                              autofillHints: const [AutofillHints.password],
+                            ),
+                          ),
+                          const SizedBox(height: 16.0),
+                          ElevatedButton(
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
+                                _handleLogin();
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 16.0,
+                                horizontal: 50.0,
+                              ),
+                            ),
+                            child: const Text(
+                              'Iniciar sesión',
+                              style: TextStyle(
+                                fontSize: 20.0,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8.0),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ForgotPasswordScreen(email: _email)),
+                              );
+                            },
+                            child: const Text(
+                              '¿Olvidaste tu contraseña?',
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const TermsAndConditionsScreen()),
+                              );
+                            },
+                            child: const Text(
+                              'Políticas y Condiciones',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

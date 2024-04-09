@@ -6,6 +6,7 @@ import 'package:securepassqr/pantalla_carga/about_screen.dart';
 import 'package:securepassqr/pantalla_carga/accesshistory_screen.dart';
 import 'package:securepassqr/pantalla_carga/helpcanter_screen.dart';
 import 'package:securepassqr/pantalla_carga/login_screen.dart';
+import 'package:securepassqr/pantalla_carga/menuadmin_screen.dart';
 import 'package:securepassqr/pantalla_carga/profile_screen.dart';
 import 'package:url_launcher/url_launcher.dart'; // Importa la biblioteca url_launcher
 
@@ -55,7 +56,7 @@ class StudentInformation extends StatelessWidget {
                   padding: const EdgeInsets.all(10.0),
                   width: double.infinity,
                   child: const Text(
-                    'Menu',
+                    'Menú',
                     textAlign: TextAlign.center,
                     style:
                         TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
@@ -75,21 +76,32 @@ class StudentInformation extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                ListTile(
-                  leading: const Icon(Icons.home), // Icono para Home
-                  title: const Text('Home'),
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const StudentInformation()),
-                    );
-                  },
-                ),
+               ListTile(
+  leading: const Icon(Icons.home), // Icono para Home
+  title: const Text('Home'),
+  onTap: () {
+    if (FirebaseAuth.instance.currentUser?.email == 'admin@gmail.com') {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const MenuAdmin(),
+        ),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const StudentInformation(),
+        ),
+      );
+    }
+  },
+),
+
                 if (isAdmin) // Solo muestra la opción si el usuario es administrador
                   ListTile(
                     leading: const Icon(Icons.person_add),
-                    title: const Text('Registrar Usuario'),
+                    title: const Text('Registro de usuario'),
                     onTap: () {
                       Navigator.pushReplacement(
                         context,

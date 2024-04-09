@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:securepassqr/pantalla_carga/login_screen.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
-  const ForgotPasswordScreen({Key? key}) : super(key: key);
+  final String email;
+
+  const ForgotPasswordScreen({Key? key, required this.email}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _emailController = TextEditingController();
-
+    final TextEditingController _emailController = TextEditingController(text: email);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 224, 119, 208),
@@ -44,6 +45,10 @@ class ForgotPasswordScreen extends StatelessWidget {
                           keyboardType: TextInputType.emailAddress,
                           decoration: const InputDecoration(
                             labelText: 'Correo electrónico',
+                            hintText: 'Ingresa tu correo electrónico',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                            ),
                             prefixIcon: Icon(Icons.email),
                           ),
                         ),

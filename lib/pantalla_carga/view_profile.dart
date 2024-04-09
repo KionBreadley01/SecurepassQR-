@@ -139,7 +139,12 @@ class ViewProfileScreen extends StatelessWidget {
         ),
       ),
       appBar: AppBar(
-        title: const Text('Perfil de Usuario'),
+        title: const Text(
+          'Perfil de Usuario',
+          style: TextStyle(
+              color: Colors.white, fontSize: 24.0, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: const Color.fromARGB(255, 224, 119, 208)
       ),
       body: SingleChildScrollView(
         child: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(

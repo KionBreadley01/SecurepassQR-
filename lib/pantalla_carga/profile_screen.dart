@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 import 'package:securepassqr/pantalla_carga/about_screen.dart';
 import 'package:securepassqr/pantalla_carga/accesshistory_screen.dart';
 import 'package:securepassqr/pantalla_carga/helpcanter_screen.dart';
@@ -8,7 +9,6 @@ import 'package:securepassqr/pantalla_carga/login_screen.dart';
 import 'package:securepassqr/pantalla_carga/student_information.dart';
 import 'package:securepassqr/pantalla_carga/view_profile.dart';
 import 'package:securepassqr/pantalla_carga/Menuadmin_screen.dart';
-
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -56,48 +56,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _saveUserData() async {
-    if (_selectedUserId.isNotEmpty) {
-      final DocumentSnapshot<Map<String, dynamic>> snapshot =
-          await _firestore.collection('users').doc(_selectedUserId).get();
-      final userData = snapshot.data();
+    if (_areFieldsFilled()) {
+      if (_selectedUserId.isNotEmpty) {
+        final DocumentSnapshot<Map<String, dynamic>> snapshot =
+            await _firestore.collection('users').doc(_selectedUserId).get();
+        final userData = snapshot.data();
 
-      if (userData != null) {
-        final Map<String, dynamic> updatedData = {
-          'firstName':
-              _firstName.isNotEmpty ? _firstName : userData['firstName'],
-          'lastName': _lastName.isNotEmpty ? _lastName : userData['lastName'],
-          'career': _career.isNotEmpty ? _career : userData['career'],
-          'registration': _registration.isNotEmpty
-              ? _registration
-              : userData['registration'],
-          'gender': _gender.isNotEmpty ? _gender : userData['gender'],
-          'email':
-              userData['email'], // Mantener el correo electrónico sin cambios
-        };
+        if (userData != null) {
+          final Map<String, dynamic> updatedData = {
+            if (_firstName.isNotEmpty) 'firstName': _firstName,
+            if (_lastName.isNotEmpty) 'lastName': _lastName,
+            if (_career.isNotEmpty) 'career': _career,
+            if (_registration.isNotEmpty) 'registration': _registration,
+            if (_gender.isNotEmpty) 'gender': _gender,
+            'email': userData['email'], // Mantener el correo electrónico sin cambios
+          };
 
-        await _firestore
-            .collection('users')
-            .doc(_selectedUserId)
-            .update(updatedData);
+          await _firestore
+              .collection('users')
+              .doc(_selectedUserId)
+              .update(updatedData);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Se ha guardado la información')),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text(
+                  'Por favor seleccione un usuario para guardar la información.')),
+        );
       }
     } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Aviso'),
-            content: const Text(
-                'Por favor seleccione un usuario para guardar la información.'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Aceptar'),
-              ),
-            ],
-          );
-        },
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text(
+                'Por favor complete todos los campos antes de guardar la información.')),
       );
     }
   }
@@ -114,14 +108,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'career': '',
         'registration': '',
         'gender': '',
-        'email':
-            userData['email'], // Mantener el correo electrónico sin cambios
+        'email': userData['email'], // Mantener el correo electrónico sin cambios
       };
 
       await _firestore
           .collection('users')
           .doc(_selectedUserId)
           .update(updatedData);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Se ha eliminado la información')),
+      );
     }
   }
 
@@ -132,6 +128,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _userEmails = Map.fromIterable(users.docs,
           key: (doc) => doc.id, value: (doc) => doc.data()?['email'] ?? '');
     });
+  }
+
+  bool _areFieldsFilled() {
+    return _firstName.isNotEmpty &&
+        _lastName.isNotEmpty &&
+        _career.isNotEmpty &&
+        _registration.isNotEmpty &&
+        _gender.isNotEmpty;
   }
 
   @override
@@ -170,38 +174,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ListTile(
                   title: const Text(
                     '',
-                    style: 
-                        TextStyle( color: Colors.black, fontWeight: FontWeight.bold, fontSize: 10.0),
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10.0),
                   ),
                   subtitle: Text(
                     FirebaseAuth.instance.currentUser!.email!,
-                    style: const TextStyle( color: Colors.black ,fontSize: 16.0),
+                    style: const TextStyle(
+                        color: Colors.black, fontSize: 16.0),
                     textAlign: TextAlign.center,
-                    
                   ),
                 ),
-              ListTile(
-  leading: const Icon(Icons.home), // Icono para Home
-  title: const Text('Home'),
-  onTap: () {
-    if (FirebaseAuth.instance.currentUser?.email == 'admin@gmail.com') {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const MenuAdmin(), // Reemplaza MenuAdmin con el nombre de tu pantalla para administradores
-        ),
-      );
-    } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const StudentInformation(),
-        ),
-      );
-    }
-  },
-),
-
+                ListTile(
+                  leading: const Icon(Icons.home), // Icono para Home
+                  title: const Text('Home'),
+                  onTap: () {
+                    if (FirebaseAuth.instance.currentUser?.email ==
+                        'admin@gmail.com') {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const MenuAdmin(), // Reemplaza MenuAdmin con el nombre de tu pantalla para administradores
+                        ),
+                      );
+                    } else {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const StudentInformation(),
+                        ),
+                      );
+                    }
+                  },
+                ),
                 if (isAdmin) // Solo muestra la opción si el usuario es administrador
                   ListTile(
                     leading: const Icon(Icons.person_add),
@@ -271,9 +278,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       appBar: AppBar(
         title: const Text(
-          'Perfil de Usuario',
+          'Gestión de Usuarios',
           style: TextStyle(
-              color: Colors.white, fontSize: 24.0, fontWeight: FontWeight.bold),
+              color: Colors.white,
+              fontSize: 24.0,
+              fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color.fromARGB(255, 224, 119, 208),
       ),
@@ -285,7 +294,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Seleciones le correo recien registrado '
+                'Selecione el correo resien agregado'
                 'Recuerda que solo podras ver los correos de los usuarios registrados',
                 style: TextStyle(fontSize: 16.0),
               ),
@@ -321,6 +330,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   border: OutlineInputBorder(),
                 ),
                 onChanged: (value) => _firstName = value,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-Z ]{1,30}$')),
+                ],
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -330,6 +342,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   border: OutlineInputBorder(),
                 ),
                 onChanged: (value) => _lastName = value,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-Z ]{1,30}$')),
+                ],
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -339,6 +354,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   border: OutlineInputBorder(),
                 ),
                 onChanged: (value) => _career = value,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-Z0-9 ]{1,25}$')),
+                ],
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -348,15 +366,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   border: OutlineInputBorder(),
                 ),
                 onChanged: (value) => _registration = value,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-Z0-9]{1,25}$')),
+                ],
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                initialValue: _gender,
+              DropdownButtonFormField<String>(
+                value: _gender.isNotEmpty ? _gender : null,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _gender = newValue ?? '';
+                  });
+                },
                 decoration: const InputDecoration(
                   labelText: 'Género',
                   border: OutlineInputBorder(),
                 ),
-                onChanged: (value) => _gender = value,
+                items: const [
+                  DropdownMenuItem<String>(
+                    value: 'Femenino',
+                    child: Text('Femenino'),
+                  ),
+                  DropdownMenuItem<String>(
+                    value: 'Masculino',
+                    child: Text('Masculino'),
+                  ),
+                ],
               ),
               const SizedBox(height: 20),
               Row(
@@ -372,23 +407,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         );
                       } else {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('Aviso'),
-                              content: const Text(
-                                  'Por favor seleccione un usuario para ver el perfil.'),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Aceptar'),
-                                ),
-                              ],
-                            );
-                          },
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  'Por favor seleccione un usuario para ver el perfil.')),
                         );
                       }
                     },
@@ -405,23 +427,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       if (_selectedUserId.isNotEmpty) {
                         _deleteUserData();
                       } else {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('Aviso'),
-                              content: const Text(
-                                  'Por favor seleccione un usuario para eliminar los datos.'),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Aceptar'),
-                                ),
-                              ],
-                            );
-                          },
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  'Por favor seleccione un usuario para eliminar los datos.')),
                         );
                       }
                     },
