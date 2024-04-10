@@ -165,7 +165,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   padding: const EdgeInsets.all(10.0),
                   width: double.infinity,
                   child: const Text(
-                    'Menu',
+                    'Menú',
                     textAlign: TextAlign.center,
                     style:
                         TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
@@ -294,8 +294,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Selecione el correo resien agregado'
-                'Recuerda que solo podras ver los correos de los usuarios registrados',
+                'Seleccione el correo electrónico recién agregado para registrar sus datos',
                 style: TextStyle(fontSize: 16.0),
               ),
               Container(

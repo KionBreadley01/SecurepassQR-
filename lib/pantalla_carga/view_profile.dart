@@ -41,7 +41,7 @@ class ViewProfileScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(10.0),
                   width: double.infinity,
                   child: const Text(
-                    'Menu',
+                    'Menú',
                     textAlign: TextAlign.center,
                     style:
                         TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),

@@ -8,6 +8,8 @@ import 'package:securepassqr/pantalla_carga/helpcanter_screen.dart';
 import 'package:securepassqr/pantalla_carga/login_screen.dart';
 import 'package:securepassqr/pantalla_carga/profile_screen.dart';
 import 'package:securepassqr/pantalla_carga/student_information.dart';
+import 'package:securepassqr/pantalla_carga/Menuadmin_screen.dart';
+
 
 class AccessHistory extends StatefulWidget {
   const AccessHistory({Key? key}) : super(key: key);
@@ -26,7 +28,9 @@ class _AccessHistoryState extends State<AccessHistory> {
   void addAccessToHistory() async {
     try {
       // Obtener la referencia al documento del usuario actual
-      final userDocRef = FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid);
+      final userDocRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid);
 
       // Obtener la ubicación actual
       String location = await getLocation();
@@ -35,13 +39,19 @@ class _AccessHistoryState extends State<AccessHistory> {
       String email = 'admin@gmail.com'; // Email del usuario administrador
       if (FirebaseAuth.instance.currentUser!.email == email) {
         // Agregar usuario a la colección admin_user si es administrador
-        FirebaseFirestore.instance.collection('admin_user').doc(FirebaseAuth.instance.currentUser!.uid).set({
+        FirebaseFirestore.instance
+            .collection('admin_user')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .set({
           'email': FirebaseAuth.instance.currentUser!.email,
           // Puedes agregar más información aquí si lo deseas
         });
 
         // Agregar una subcolección llamada 'access_history' al documento del usuario administrador
-        final adminAccessHistoryRef = FirebaseFirestore.instance.collection('admin_user').doc(FirebaseAuth.instance.currentUser!.uid).collection('access_history');
+        final adminAccessHistoryRef = FirebaseFirestore.instance
+            .collection('admin_user')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .collection('access_history');
 
         // Agregar información a la subcolección
         adminAccessHistoryRef.add({
@@ -68,7 +78,8 @@ class _AccessHistoryState extends State<AccessHistory> {
   // Esta función devuelve la ubicación actual del dispositivo
   Future<String> getLocation() async {
     try {
-      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
       return 'Lat: ${position.latitude}, Long: ${position.longitude}';
     } catch (e) {
       return 'No se pudo obtener la ubicación: $e';
@@ -83,9 +94,11 @@ class _AccessHistoryState extends State<AccessHistory> {
     return Scaffold(
       drawer: Drawer(
         backgroundColor: const Color.fromARGB(255, 224, 119, 208),
+        // Aquí van los elementos del Drawer
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // Aquí van los elementos del Drawer
             Column(
               children: [
                 SizedBox(
@@ -101,40 +114,59 @@ class _AccessHistoryState extends State<AccessHistory> {
                   padding: const EdgeInsets.all(10.0),
                   width: double.infinity,
                   child: const Text(
-                    'Menu',
+                    'Menú',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+                    style:
+                        TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
                   ),
                 ),
                 ListTile(
                   title: const Text(
                     '',
-                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 10.0),
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10.0),
                   ),
                   subtitle: Text(
                     FirebaseAuth.instance.currentUser!.email!,
-                    style: const TextStyle(color: Colors.black, fontSize: 16.0),
+                    style: const TextStyle(
+                        color: Colors.black, fontSize: 16.0),
                     textAlign: TextAlign.center,
                   ),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.home),
+                  leading: const Icon(Icons.home), // Icono para Home
                   title: const Text('Home'),
                   onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const StudentInformation()),
-                    );
+                    if (FirebaseAuth.instance.currentUser?.email ==
+                        'admin@gmail.com') {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const MenuAdmin(), // Reemplaza MenuAdmin con el nombre de tu pantalla para administradores
+                        ),
+                      );
+                    } else {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const StudentInformation(),
+                        ),
+                      );
+                    }
                   },
                 ),
-                if (isAdmin)
+                if (isAdmin) // Solo muestra la opción si el usuario es administrador
                   ListTile(
                     leading: const Icon(Icons.person_add),
                     title: const Text('Registrar Usuario'),
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => const ProfileScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => const ProfileScreen()),
                       );
                     },
                   ),
@@ -144,7 +176,8 @@ class _AccessHistoryState extends State<AccessHistory> {
                   onTap: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => const AccessHistory()),
+                      MaterialPageRoute(
+                          builder: (context) => const AccessHistory()),
                     );
                   },
                 ),
@@ -154,7 +187,8 @@ class _AccessHistoryState extends State<AccessHistory> {
                   onTap: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => const AboutScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const AboutScreen()),
                     );
                   },
                 ),
@@ -164,7 +198,8 @@ class _AccessHistoryState extends State<AccessHistory> {
                   onTap: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => const HelpCenterScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const HelpCenterScreen()),
                     );
                   },
                 ),
@@ -176,9 +211,12 @@ class _AccessHistoryState extends State<AccessHistory> {
                   leading: const Icon(Icons.logout),
                   title: const Text('Cerrar Sesión'),
                   onTap: () {
+                    // Acción para cerrar sesión
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const LoginScreen()), // Reemplaza LoginScreen con el nombre de tu pantalla de inicio de sesión
                     );
                   },
                 ),
@@ -188,22 +226,28 @@ class _AccessHistoryState extends State<AccessHistory> {
         ),
       ),
       appBar: AppBar(
-        title: const Text('Historial de Accesos'),
+        title: const Text(
+          'Historial de Accesos     Por favor, regrese a la pestaña de Historial de Accesos si no se han registrado nuevas entradas',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              color: Colors.white, fontSize: 24.0, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: const Color.fromARGB(255, 224, 119, 208),
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: isAdmin ?
-          FirebaseFirestore.instance
-            .collection('admin_user')
-            .doc(FirebaseAuth.instance.currentUser!.uid)
-            .collection('access_history')
-            .orderBy('date', descending: true)
-            .snapshots() :
-          FirebaseFirestore.instance
-            .collection('users')
-            .doc(FirebaseAuth.instance.currentUser!.uid)
-            .collection('access_history')
-            .orderBy('date', descending: true)
-            .snapshots(),
+    body: StreamBuilder<QuerySnapshot>(
+        stream: isAdmin
+            ? FirebaseFirestore.instance
+                .collection('admin_user')
+                .doc(FirebaseAuth.instance.currentUser!.uid)
+                .collection('access_history')
+                .orderBy('date', descending: true)
+                .snapshots()
+            : FirebaseFirestore.instance
+                .collection('users')
+                .doc(FirebaseAuth.instance.currentUser!.uid)
+                .collection('access_history')
+                .orderBy('date', descending: true)
+                .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -216,19 +260,69 @@ class _AccessHistoryState extends State<AccessHistory> {
             );
           }
           final documents = snapshot.data!.docs;
+          Map<DateTime, List<DocumentSnapshot>> groupedByDate =
+              groupByDate(documents);
+
           return ListView.builder(
-            itemCount: documents.length,
+            itemCount: groupedByDate.length,
             itemBuilder: (context, index) {
-              final access = documents[index];
-              final date = access['date'].toDate();
-              return ListTile(
-                title: Text('Fecha y Hora: ${DateFormat('yyyy-MM-dd HH:mm').format(date)}'),
-                subtitle: Text('Ubicación: ${access['location']}'),
+              DateTime date = groupedByDate.keys.elementAt(index);
+              List<DocumentSnapshot> accesses = groupedByDate[date]!;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      DateFormat('yyyy-MM-dd').format(date),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: accesses.length,
+                    itemBuilder: (context, index) {
+                      final access = accesses[index];
+                      final date = access['date'].toDate();
+                      return Card(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 16.0),
+                        child: ListTile(
+                          title: Text(
+                              'Fecha y Hora: ${DateFormat('yyyy-MM-dd HH:mm').format(date)}'),
+                          subtitle: Text('Ubicación: ${access['location']}'),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               );
             },
           );
         },
       ),
     );
+  }
+
+  Map<DateTime, List<DocumentSnapshot>> groupByDate(
+      List<DocumentSnapshot> documents) {
+    Map<DateTime, List<DocumentSnapshot>> groupedByDate = {};
+
+    documents.forEach((document) {
+      DateTime date = (document['date'] as Timestamp).toDate();
+      DateTime dateWithoutTime = DateTime(date.year, date.month, date.day);
+
+      if (!groupedByDate.containsKey(dateWithoutTime)) {
+        groupedByDate[dateWithoutTime] = [];
+      }
+
+      groupedByDate[dateWithoutTime]!.add(document);
+    });
+
+    return groupedByDate;
   }
 }

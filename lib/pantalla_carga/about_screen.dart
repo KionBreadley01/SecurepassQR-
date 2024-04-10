@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:securepassqr/pantalla_carga/accesshistory_screen.dart';
 import 'package:securepassqr/pantalla_carga/helpcanter_screen.dart';
 import 'package:securepassqr/pantalla_carga/login_screen.dart';
+import 'package:securepassqr/pantalla_carga/menuadmin_screen.dart';
 import 'package:securepassqr/pantalla_carga/profile_screen.dart';
 import 'package:securepassqr/pantalla_carga/student_information.dart';
 
@@ -14,9 +15,8 @@ class AboutScreen extends StatelessWidget {
   Widget build(BuildContext context) {
   String email = 'admin@gmail.com'; // Email del usuario administrador
   final isAdmin = FirebaseAuth.instance.currentUser?.email == email;
-
     return Scaffold(
-      drawer: Drawer(
+        drawer: Drawer(
         backgroundColor: const Color.fromARGB(255, 224, 119, 208),
         // Aquí van los elementos del Drawer
         child: Column(
@@ -38,7 +38,7 @@ class AboutScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(10.0),
                   width: double.infinity,
                   child: const Text(
-                    'Menu',
+                    'Menú',
                     textAlign: TextAlign.center,
                     style:
                         TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
@@ -47,25 +47,39 @@ class AboutScreen extends StatelessWidget {
                 ListTile(
                   title: const Text(
                     '',
-                    style: 
-                        TextStyle( color: Colors.black, fontWeight: FontWeight.bold, fontSize: 10.0),
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10.0),
                   ),
                   subtitle: Text(
                     FirebaseAuth.instance.currentUser!.email!,
-                    style: const TextStyle( color: Colors.black ,fontSize: 16.0),
+                    style: const TextStyle(
+                        color: Colors.black, fontSize: 16.0),
                     textAlign: TextAlign.center,
-                    
                   ),
                 ),
                 ListTile(
-                    leading: const Icon(Icons.home), // Icono para Home
+                  leading: const Icon(Icons.home), // Icono para Home
                   title: const Text('Home'),
                   onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const StudentInformation()),
-                    );
+                    if (FirebaseAuth.instance.currentUser?.email ==
+                        'admin@gmail.com') {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const MenuAdmin(), // Reemplaza MenuAdmin con el nombre de tu pantalla para administradores
+                        ),
+                      );
+                    } else {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const StudentInformation(),
+                        ),
+                      );
+                    }
                   },
                 ),
                 if (isAdmin) // Solo muestra la opción si el usuario es administrador

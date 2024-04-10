@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:securepassqr/pantalla_carga/about_screen.dart';
 import 'package:securepassqr/pantalla_carga/accesshistory_screen.dart';
 import 'package:securepassqr/pantalla_carga/login_screen.dart';
+import 'package:securepassqr/pantalla_carga/menuadmin_screen.dart';
 import 'package:securepassqr/pantalla_carga/profile_screen.dart';
 import 'package:securepassqr/pantalla_carga/student_information.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -29,11 +30,13 @@ class HelpCenterScreen extends StatelessWidget {
         'admin@gmail.com'; // Email del usuario administrador // Verificar si el usuario actual es administrador
     final isAdmin = FirebaseAuth.instance.currentUser?.email == email;
     return Scaffold(
-      drawer: Drawer(
+       drawer: Drawer(
         backgroundColor: const Color.fromARGB(255, 224, 119, 208),
+        // Aquí van los elementos del Drawer
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // Aquí van los elementos del Drawer
             Column(
               children: [
                 SizedBox(
@@ -49,7 +52,7 @@ class HelpCenterScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(10.0),
                   width: double.infinity,
                   child: const Text(
-                    'Menu',
+                    'Menú',
                     textAlign: TextAlign.center,
                     style:
                         TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
@@ -65,23 +68,35 @@ class HelpCenterScreen extends StatelessWidget {
                   ),
                   subtitle: Text(
                     FirebaseAuth.instance.currentUser!.email!,
-                    style: const TextStyle(color: Colors.black, fontSize: 16.0),
+                    style: const TextStyle(
+                        color: Colors.black, fontSize: 16.0),
                     textAlign: TextAlign.center,
                   ),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.home),
+                  leading: const Icon(Icons.home), // Icono para Home
                   title: const Text('Home'),
                   onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const StudentInformation(),
-                      ),
-                    );
+                    if (FirebaseAuth.instance.currentUser?.email ==
+                        'admin@gmail.com') {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const MenuAdmin(), // Reemplaza MenuAdmin con el nombre de tu pantalla para administradores
+                        ),
+                      );
+                    } else {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const StudentInformation(),
+                        ),
+                      );
+                    }
                   },
                 ),
-                if (isAdmin)
+                if (isAdmin) // Solo muestra la opción si el usuario es administrador
                   ListTile(
                     leading: const Icon(Icons.person_add),
                     title: const Text('Registrar Usuario'),
@@ -89,8 +104,7 @@ class HelpCenterScreen extends StatelessWidget {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ProfileScreen(),
-                        ),
+                            builder: (context) => const ProfileScreen()),
                       );
                     },
                   ),
@@ -101,8 +115,7 @@ class HelpCenterScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const AccessHistory(),
-                      ),
+                          builder: (context) => const AccessHistory()),
                     );
                   },
                 ),
@@ -113,8 +126,7 @@ class HelpCenterScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const AboutScreen(),
-                      ),
+                          builder: (context) => const AboutScreen()),
                     );
                   },
                 ),
@@ -125,8 +137,7 @@ class HelpCenterScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const HelpCenterScreen(),
-                      ),
+                          builder: (context) => const HelpCenterScreen()),
                     );
                   },
                 ),
@@ -138,11 +149,12 @@ class HelpCenterScreen extends StatelessWidget {
                   leading: const Icon(Icons.logout),
                   title: const Text('Cerrar Sesión'),
                   onTap: () {
+                    // Acción para cerrar sesión
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const LoginScreen(),
-                      ),
+                          builder: (context) =>
+                              const LoginScreen()), // Reemplaza LoginScreen con el nombre de tu pantalla de inicio de sesión
                     );
                   },
                 ),

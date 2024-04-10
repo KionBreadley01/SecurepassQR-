@@ -26,7 +26,6 @@ class StudentInformation extends StatelessWidget {
       throw 'Could not launch ${_emailLaunchUri.toString()}';
     }
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -76,28 +75,28 @@ class StudentInformation extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
-               ListTile(
-  leading: const Icon(Icons.home), // Icono para Home
-  title: const Text('Home'),
-  onTap: () {
-    if (FirebaseAuth.instance.currentUser?.email == 'admin@gmail.com') {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const MenuAdmin(),
-        ),
-      );
-    } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const StudentInformation(),
-        ),
-      );
-    }
-  },
-),
-
+                ListTile(
+                  leading: const Icon(Icons.home), // Icono para Home
+                  title: const Text('Home'),
+                  onTap: () {
+                    if (FirebaseAuth.instance.currentUser?.email ==
+                        'admin@gmail.com') {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MenuAdmin(),
+                        ),
+                      );
+                    } else {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const StudentInformation(),
+                        ),
+                      );
+                    }
+                  },
+                ),
                 if (isAdmin) // Solo muestra la opción si el usuario es administrador
                   ListTile(
                     leading: const Icon(Icons.person_add),
