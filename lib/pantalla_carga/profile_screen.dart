@@ -6,9 +6,11 @@ import 'package:securepassqr/pantalla_carga/about_screen.dart';
 import 'package:securepassqr/pantalla_carga/accesshistory_screen.dart';
 import 'package:securepassqr/pantalla_carga/helpcanter_screen.dart';
 import 'package:securepassqr/pantalla_carga/login_screen.dart';
+import 'package:securepassqr/pantalla_carga/signup_screen.dart';
 import 'package:securepassqr/pantalla_carga/student_information.dart';
 import 'package:securepassqr/pantalla_carga/view_profile.dart';
 import 'package:securepassqr/pantalla_carga/Menuadmin_screen.dart';
+import 'package:securepassqr/pantalla_carga/viewhistory.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -69,7 +71,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             if (_career.isNotEmpty) 'career': _career,
             if (_registration.isNotEmpty) 'registration': _registration,
             if (_gender.isNotEmpty) 'gender': _gender,
-            'email': userData['email'], // Mantener el correo electrónico sin cambios
+            'email':
+                userData['email'], // Mantener el correo electrónico sin cambios
           };
 
           await _firestore
@@ -108,7 +111,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'career': '',
         'registration': '',
         'gender': '',
-        'email': userData['email'], // Mantener el correo electrónico sin cambios
+        'email':
+            userData['email'], // Mantener el correo electrónico sin cambios
       };
 
       await _firestore
@@ -181,8 +185,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   subtitle: Text(
                     FirebaseAuth.instance.currentUser!.email!,
-                    style: const TextStyle(
-                        color: Colors.black, fontSize: 16.0),
+                    style: const TextStyle(color: Colors.black, fontSize: 16.0),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -212,7 +215,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 if (isAdmin) // Solo muestra la opción si el usuario es administrador
                   ListTile(
                     leading: const Icon(Icons.person_add),
-                    title: const Text('Registrar Usuario'),
+                    title: const Text('Regritro de usuarios'),
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SignupScreen()),
+                      );
+                    },
+                  ),
+                if (isAdmin) // Solo muestra la opción si el usuario es administrador
+                  ListTile(
+                    leading: const Icon(Icons.person),
+                    title: const Text('Gestión de Usuarios'),
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
@@ -280,9 +295,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: const Text(
           'Gestión de Usuarios',
           style: TextStyle(
-              color: Colors.white,
-              fontSize: 24.0,
-              fontWeight: FontWeight.bold),
+              color: Colors.white, fontSize: 24.0, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color.fromARGB(255, 224, 119, 208),
       ),
@@ -294,7 +307,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Seleccione el correo electrónico recién agregado para registrar sus datos',
+                'Por favor, elija un correo electrónico para poder ver su información, realizar modificaciones, guardar cambios, eliminar datos y revisar su historial de accesos',
                 style: TextStyle(fontSize: 16.0),
               ),
               Container(
@@ -330,7 +343,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 onChanged: (value) => _firstName = value,
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-Z ]{1,30}$')),
+                  FilteringTextInputFormatter.allow(
+                      RegExp(r'^[a-zA-Z ]{1,30}$')),
                 ],
               ),
               const SizedBox(height: 16),
@@ -342,7 +356,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 onChanged: (value) => _lastName = value,
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-Z ]{1,30}$')),
+                  FilteringTextInputFormatter.allow(
+                      RegExp(r'^[a-zA-Z ]{1,30}$')),
                 ],
               ),
               const SizedBox(height: 16),
@@ -354,7 +369,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 onChanged: (value) => _career = value,
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-Z0-9 ]{1,25}$')),
+                  FilteringTextInputFormatter.allow(
+                      RegExp(r'^[a-zA-Z0-9 ]{1,25}$')),
                 ],
               ),
               const SizedBox(height: 16),
@@ -366,7 +382,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 onChanged: (value) => _registration = value,
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-Z0-9]{1,25}$')),
+                  FilteringTextInputFormatter.allow(
+                      RegExp(r'^[a-zA-Z0-9]{1,25}$')),
                 ],
               ),
               const SizedBox(height: 16),
@@ -389,6 +406,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   DropdownMenuItem<String>(
                     value: 'Masculino',
                     child: Text('Masculino'),
+                  ),
+                  DropdownMenuItem<String>(
+                    value: 'Indistinto',
+                    child: Text('Indistinto'),
                   ),
                 ],
               ),
@@ -434,6 +455,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       }
                     },
                     child: const Text('Eliminar Datos'),
+                  ),
+                  const SizedBox(width: 20), // Espacio entre botones
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_selectedUserId.isNotEmpty) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ViewHistory(userId: _selectedUserId),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  'Por favor seleccione un usuario para ver el historial de accesos.')),
+                        );
+                      }
+                    },
+                    child: const Text('Ver Historial'),
                   ),
                 ],
               ),

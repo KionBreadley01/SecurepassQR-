@@ -7,9 +7,9 @@ import 'package:securepassqr/pantalla_carga/about_screen.dart';
 import 'package:securepassqr/pantalla_carga/helpcanter_screen.dart';
 import 'package:securepassqr/pantalla_carga/login_screen.dart';
 import 'package:securepassqr/pantalla_carga/profile_screen.dart';
+import 'package:securepassqr/pantalla_carga/signup_screen.dart';
 import 'package:securepassqr/pantalla_carga/student_information.dart';
 import 'package:securepassqr/pantalla_carga/Menuadmin_screen.dart';
-
 
 class AccessHistory extends StatefulWidget {
   const AccessHistory({Key? key}) : super(key: key);
@@ -130,8 +130,7 @@ class _AccessHistoryState extends State<AccessHistory> {
                   ),
                   subtitle: Text(
                     FirebaseAuth.instance.currentUser!.email!,
-                    style: const TextStyle(
-                        color: Colors.black, fontSize: 16.0),
+                    style: const TextStyle(color: Colors.black, fontSize: 16.0),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -161,7 +160,19 @@ class _AccessHistoryState extends State<AccessHistory> {
                 if (isAdmin) // Solo muestra la opción si el usuario es administrador
                   ListTile(
                     leading: const Icon(Icons.person_add),
-                    title: const Text('Registrar Usuario'),
+                    title: const Text('Regritro de usuarios'),
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SignupScreen()),
+                      );
+                    },
+                  ),
+                if (isAdmin) // Solo muestra la opción si el usuario es administrador
+                  ListTile(
+                    leading: const Icon(Icons.person),
+                    title: const Text('Gestión de Usuarios'),
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
@@ -227,14 +238,30 @@ class _AccessHistoryState extends State<AccessHistory> {
       ),
       appBar: AppBar(
         title: const Text(
-          'Historial de Accesos     Por favor, regrese a la pestaña de Historial de Accesos si no se han registrado nuevas entradas',
+          'Historial de Accesos',
           textAlign: TextAlign.center,
           style: TextStyle(
               color: Colors.white, fontSize: 24.0, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color.fromARGB(255, 224, 119, 208),
+         bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(30.0),
+          child: Container(
+            alignment: Alignment.center,
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: const Text(
+              'Por favor, regrese a la pestaña de Historial de Accesos si no se han registrado nuevas entradas.',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16.0,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
       ),
-    body: StreamBuilder<QuerySnapshot>(
+      body:
+       StreamBuilder<QuerySnapshot>(
         stream: isAdmin
             ? FirebaseFirestore.instance
                 .collection('admin_user')
@@ -275,7 +302,7 @@ class _AccessHistoryState extends State<AccessHistory> {
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       DateFormat('yyyy-MM-dd').format(date),
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -283,7 +310,7 @@ class _AccessHistoryState extends State<AccessHistory> {
                   ),
                   ListView.builder(
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: accesses.length,
                     itemBuilder: (context, index) {
                       final access = accesses[index];

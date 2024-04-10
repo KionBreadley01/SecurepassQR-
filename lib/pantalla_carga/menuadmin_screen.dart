@@ -59,32 +59,44 @@ class MenuAdmin extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
-               ListTile(
-  leading: const Icon(Icons.home), // Icono para Home
-  title: const Text('Home'),
-  onTap: () {
-    if (FirebaseAuth.instance.currentUser?.email == 'admin@gmail.com') {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const MenuAdmin(),
-        ),
-      );
-    } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const StudentInformation(),
-        ),
-      );
-    }
-  },
-),
-
+                ListTile(
+                  leading: const Icon(Icons.home), // Icono para Home
+                  title: const Text('Home'),
+                  onTap: () {
+                    if (FirebaseAuth.instance.currentUser?.email ==
+                        'admin@gmail.com') {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MenuAdmin(),
+                        ),
+                      );
+                    } else {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const StudentInformation(),
+                        ),
+                      );
+                    }
+                  },
+                ),
                 if (isAdmin) // Solo muestra la opción si el usuario es administrador
                   ListTile(
                     leading: const Icon(Icons.person_add),
-                    title: const Text('Registrar Usuario'),
+                    title: const Text('Regritro de usuarios'),
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SignupScreen()),
+                      );
+                    },
+                  ),
+                if (isAdmin) // Solo muestra la opción si el usuario es administrador
+                  ListTile(
+                    leading: const Icon(Icons.person),
+                    title: const Text('Gestión de Usuarios'),
                     onTap: () {
                       Navigator.pushReplacement(
                         context,

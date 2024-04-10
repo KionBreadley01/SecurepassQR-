@@ -6,7 +6,9 @@ import 'package:securepassqr/pantalla_carga/about_screen.dart';
 import 'package:securepassqr/pantalla_carga/accesshistory_screen.dart';
 import 'package:securepassqr/pantalla_carga/helpcanter_screen.dart';
 import 'package:securepassqr/pantalla_carga/login_screen.dart';
+import 'package:securepassqr/pantalla_carga/menuadmin_screen.dart';
 import 'package:securepassqr/pantalla_carga/profile_screen.dart';
+import 'package:securepassqr/pantalla_carga/signup_screen.dart';
 import 'package:securepassqr/pantalla_carga/student_information.dart';
 
 class ViewProfileScreen extends StatelessWidget {
@@ -16,7 +18,8 @@ class ViewProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String email = 'admin@gmail.com'; // Email del usuario administrador // Verificar si el usuario actual es administrador
+    String email =
+        'admin@gmail.com'; // Email del usuario administrador // Verificar si el usuario actual es administrador
     final isAdmin = FirebaseAuth.instance.currentUser?.email == email;
     return Scaffold(
       drawer: Drawer(
@@ -50,31 +53,56 @@ class ViewProfileScreen extends StatelessWidget {
                 ListTile(
                   title: const Text(
                     '',
-                    style: 
-                        TextStyle( color: Colors.black, fontWeight: FontWeight.bold, fontSize: 10.0),
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10.0),
                   ),
                   subtitle: Text(
                     FirebaseAuth.instance.currentUser!.email!,
-                    style: const TextStyle( color: Colors.black ,fontSize: 16.0),
+                    style: const TextStyle(color: Colors.black, fontSize: 16.0),
                     textAlign: TextAlign.center,
-                    
                   ),
                 ),
-                ListTile(
-                    leading: const Icon(Icons.home), // Icono para Home
+                   ListTile(
+                  leading: const Icon(Icons.home), // Icono para Home
                   title: const Text('Home'),
                   onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const StudentInformation()),
-                    );
+                    if (FirebaseAuth.instance.currentUser?.email ==
+                        'admin@gmail.com') {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const MenuAdmin(), // Reemplaza MenuAdmin con el nombre de tu pantalla para administradores
+                        ),
+                      );
+                    } else {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const StudentInformation(),
+                        ),
+                      );
+                    }
                   },
                 ),
                 if (isAdmin) // Solo muestra la opción si el usuario es administrador
                   ListTile(
                     leading: const Icon(Icons.person_add),
-                    title: const Text('Registrar Usuario'),
+                    title: const Text('Regritro de usuarios'),
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SignupScreen()),
+                      );
+                    },
+                  ),
+                if (isAdmin) // Solo muestra la opción si el usuario es administrador
+                  ListTile(
+                    leading: const Icon(Icons.person),
+                    title: const Text('Gestión de Usuarios'),
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
@@ -139,16 +167,18 @@ class ViewProfileScreen extends StatelessWidget {
         ),
       ),
       appBar: AppBar(
-        title: const Text(
-          'Perfil de Usuario',
-          style: TextStyle(
-              color: Colors.white, fontSize: 24.0, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: const Color.fromARGB(255, 224, 119, 208)
-      ),
+          title: const Text(
+            'Perfil de Usuario',
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 24.0,
+                fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: const Color.fromARGB(255, 224, 119, 208)),
       body: SingleChildScrollView(
         child: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-          future: FirebaseFirestore.instance.collection('users').doc(userId).get(),
+          future:
+              FirebaseFirestore.instance.collection('users').doc(userId).get(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
@@ -169,7 +199,8 @@ class ViewProfileScreen extends StatelessWidget {
             final userData = snapshot.data!.data()!;
 
             // Texto que se utilizará para generar el código QR
-            String qrData = '${userData['firstName']} ${userData['lastName']}, ${userData['registration']}, ${userData['career']}, ${userData['gender']}';
+            String qrData =
+                '${userData['firstName']} ${userData['lastName']}, ${userData['registration']}, ${userData['career']}, ${userData['gender']}';
 
             return Padding(
               padding: const EdgeInsets.all(16.0),
@@ -185,7 +216,8 @@ class ViewProfileScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 10.0),
                           child: Text(
                             'Detalles del Usuario',
                             style: TextStyle(
@@ -199,43 +231,56 @@ class ViewProfileScreen extends StatelessWidget {
                         ListTile(
                           title: const Text(
                             'Correo Electrónico:',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18.0),
                           ),
-                          subtitle: Text(userData['email'], style: const TextStyle(fontSize: 16.0)),
+                          subtitle: Text(userData['email'],
+                              style: const TextStyle(fontSize: 16.0)),
                         ),
                         const Divider(),
                         ListTile(
                           title: const Text(
                             'Nombre:',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18.0),
                           ),
-                          subtitle: Text('${userData['firstName']} ${userData['lastName']}', style: const TextStyle(fontSize: 16.0)),
+                          subtitle: Text(
+                              '${userData['firstName']} ${userData['lastName']}',
+                              style: const TextStyle(fontSize: 16.0)),
                         ),
                         const Divider(),
                         ListTile(
                           title: const Text(
                             'Carrera:',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18.0),
                           ),
-                          subtitle: Text(userData['career'], style: const TextStyle(fontSize: 16.0)),
+                          subtitle: Text(userData['career'],
+                              style: const TextStyle(fontSize: 16.0)),
                         ),
                         const Divider(),
                         ListTile(
                           title: const Text(
                             'Matrícula:',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18.0),
                           ),
-                          subtitle: Text(userData['registration'], style: const TextStyle(fontSize: 16.0)),
+                          subtitle: Text(userData['registration'],
+                              style: const TextStyle(fontSize: 16.0)),
                         ),
                         const Divider(),
                         ListTile(
                           title: const Text(
                             'Género:',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18.0),
                           ),
-                          subtitle: Text(userData['gender'], style: const TextStyle(fontSize: 16.0)),
+                          subtitle: Text(userData['gender'],
+                              style: const TextStyle(fontSize: 16.0)),
                         ),
-                        const SizedBox(height: 10.0), // Añadimos espacio adicional al final
+                        const SizedBox(
+                            height:
+                                10.0), // Añadimos espacio adicional al final
                       ],
                     ),
                   ),

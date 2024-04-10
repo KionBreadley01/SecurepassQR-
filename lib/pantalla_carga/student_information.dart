@@ -8,6 +8,7 @@ import 'package:securepassqr/pantalla_carga/helpcanter_screen.dart';
 import 'package:securepassqr/pantalla_carga/login_screen.dart';
 import 'package:securepassqr/pantalla_carga/menuadmin_screen.dart';
 import 'package:securepassqr/pantalla_carga/profile_screen.dart';
+import 'package:securepassqr/pantalla_carga/signup_screen.dart';
 import 'package:url_launcher/url_launcher.dart'; // Importa la biblioteca url_launcher
 
 class StudentInformation extends StatelessWidget {
@@ -100,7 +101,19 @@ class StudentInformation extends StatelessWidget {
                 if (isAdmin) // Solo muestra la opción si el usuario es administrador
                   ListTile(
                     leading: const Icon(Icons.person_add),
-                    title: const Text('Registro de usuario'),
+                    title: const Text('Regritro de usuarios'),
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SignupScreen()),
+                      );
+                    },
+                  ),
+                if (isAdmin) // Solo muestra la opción si el usuario es administrador
+                  ListTile(
+                    leading: const Icon(Icons.person),
+                    title: const Text('Gestión de Usuarios'),
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
