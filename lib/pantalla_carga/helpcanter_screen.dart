@@ -100,7 +100,7 @@ class HelpCenterScreen extends StatelessWidget {
                 if (isAdmin) // Solo muestra la opción si el usuario es administrador
                   ListTile(
                     leading: const Icon(Icons.person_add),
-                    title: const Text('Regritro de usuarios'),
+                    title: const Text('Regristro de usuarios'),
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
@@ -184,7 +184,7 @@ class HelpCenterScreen extends StatelessWidget {
         ),
         backgroundColor: const Color.fromARGB(255, 224, 119, 208),
       ),
-      body: Padding(
+     body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -231,24 +231,23 @@ class HelpCenterScreen extends StatelessWidget {
               style: TextStyle(fontSize: 18.0),
               textAlign: TextAlign.center,
             ),
-        Padding(
-  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0), // Ajusta el padding según sea necesario
-  child: GestureDetector(
-    onTap: _launchEmail, // Llama a la función _launchEmail al hacer clic
-    child: const Flex(
-      direction: Axis.horizontal,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(Icons.email, color: Colors.blue), // Icono
-        SizedBox(width: 4.0), // Espacio entre el icono y el texto
-        Text(
-          'Correo electrónico: securepassqr@gmail.com',
-          style: TextStyle(fontSize: 14.0, color: Colors.blue), // Estilo del texto
-        ),
-      ],
-    ),
-  ),
-),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0), // Ajusta el padding según sea necesario
+              child: GestureDetector(
+                onTap: _launchEmail, // Llama a la función _launchEmail al hacer clic
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.email, color: Colors.blue), // Icono
+                    SizedBox(width: 4.0), // Espacio entre el icono y el texto
+                    Text(
+                      'Correo electrónico: securepassqr@gmail.com',
+                      style: TextStyle(fontSize: 14.0, color: Colors.blue), // Estilo del texto
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),

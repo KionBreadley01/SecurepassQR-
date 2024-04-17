@@ -90,7 +90,7 @@ class ViewProfileScreen extends StatelessWidget {
                 if (isAdmin) // Solo muestra la opción si el usuario es administrador
                   ListTile(
                     leading: const Icon(Icons.person_add),
-                    title: const Text('Regritro de usuarios'),
+                    title: const Text('Regristro de usuarios'),
                     onTap: () {
                       Navigator.pushReplacement(
                         context,

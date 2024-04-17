@@ -215,7 +215,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 if (isAdmin) // Solo muestra la opción si el usuario es administrador
                   ListTile(
                     leading: const Icon(Icons.person_add),
-                    title: const Text('Regritro de usuarios'),
+                    title: const Text('Regristro de usuarios'),
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
@@ -344,7 +344,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onChanged: (value) => _firstName = value,
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(
-                      RegExp(r'^[a-zA-Z ]{1,30}$')),
+                    RegExp(
+                        r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\s]{1,30}$'), // Acepta letras, espacios y acentos
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
@@ -357,7 +359,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onChanged: (value) => _lastName = value,
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(
-                      RegExp(r'^[a-zA-Z ]{1,30}$')),
+                    RegExp(
+                        r'^[a-zA-ZáéíóúÁÉÍÓÚüÜ\s]{1,30}$'), // Acepta letras, espacios y acentos
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
@@ -416,66 +420,78 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 20),
               Row(
                 children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      if (_selectedUserId.isNotEmpty) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ViewProfileScreen(userId: _selectedUserId),
-                          ),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text(
-                                  'Por favor seleccione un usuario para ver el perfil.')),
-                        );
-                      }
-                    },
-                    child: const Text('Ver Perfil'),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (_selectedUserId.isNotEmpty) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ViewProfileScreen(userId: _selectedUserId),
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text(
+                                    'Por favor seleccione un usuario para ver el perfil.')),
+                          );
+                        }
+                      },
+                      child: const Text('Ver Perfil'),
+                    ),
                   ),
                   const SizedBox(width: 20), // Espacio entre botones
-                  ElevatedButton(
-                    onPressed: _saveUserData,
-                    child: const Text('Guardar'),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _saveUserData,
+                      child: const Text('Guardar'),
+                    ),
                   ),
                   const SizedBox(width: 20), // Espacio entre botones
-                  ElevatedButton(
-                    onPressed: () {
-                      if (_selectedUserId.isNotEmpty) {
-                        _deleteUserData();
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text(
-                                  'Por favor seleccione un usuario para eliminar los datos.')),
-                        );
-                      }
-                    },
-                    child: const Text('Eliminar Datos'),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (_selectedUserId.isNotEmpty) {
+                          _deleteUserData();
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text(
+                                    'Por favor seleccione un usuario para eliminar los datos.')),
+                          );
+                        }
+                      },
+                      child: const Text('Eliminar Datos'),
+                    ),
                   ),
-                  const SizedBox(width: 20), // Espacio entre botones
-                  ElevatedButton(
-                    onPressed: () {
-                      if (_selectedUserId.isNotEmpty) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ViewHistory(userId: _selectedUserId),
-                          ),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text(
-                                  'Por favor seleccione un usuario para ver el historial de accesos.')),
-                        );
-                      }
-                    },
-                    child: const Text('Ver Historial'),
+                ],
+              ),
+              const SizedBox(height: 20), // Espacio entre filas
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (_selectedUserId.isNotEmpty) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ViewHistory(userId: _selectedUserId),
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text(
+                                    'Por favor seleccione un usuario para ver el historial de accesos.')),
+                          );
+                        }
+                      },
+                      child: const Text('Ver Historial'),
+                    ),
                   ),
                 ],
               ),

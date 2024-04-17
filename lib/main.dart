@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart'; // Importa el paquete de autenticación de Firebase
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:securepassqr/firebase_options.dart';
@@ -9,21 +8,11 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  // Agregar el código para escuchar los cambios en el estado de autenticación del usuario
-  FirebaseAuth.instance.authStateChanges().listen((User? user) {
-    if (user == null) {
-      print('Usuario no autenticado');
-    } else {
-      print('Usuario autenticado: ${user.uid}');
-    }
-  });
-
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {

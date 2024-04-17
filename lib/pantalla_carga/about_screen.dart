@@ -86,7 +86,7 @@ class AboutScreen extends StatelessWidget {
                 if (isAdmin) // Solo muestra la opción si el usuario es administrador
                   ListTile(
                     leading: const Icon(Icons.person_add),
-                    title: const Text('Regritro de usuarios'),
+                    title: const Text('Regristro de usuarios'),
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
@@ -163,7 +163,7 @@ class AboutScreen extends StatelessWidget {
         ),
       ),
       appBar: AppBar(
-        title: const Text('Acerca de',
+        title: const Text('Información de la App',
            style: TextStyle(color: Colors.white, fontSize: 24.0, fontWeight: FontWeight.bold),
         ),
            backgroundColor: const Color.fromARGB(255, 224, 119, 208),
@@ -180,7 +180,7 @@ class AboutScreen extends StatelessWidget {
       ),
       const SizedBox(height: 10.0),
       const Text(
-        'Versión: 2.18.5.10 Aqua',
+        'Versión: 2.5.6.2 Megumin',
         style: TextStyle(fontSize: 18.0),
         textAlign: TextAlign.center,
       ),
@@ -194,10 +194,17 @@ class AboutScreen extends StatelessWidget {
         ),
       ),
       const SizedBox(height: 20.0),
+      Center(
+        child: Image.asset('assets/images/ssssssssssssssssssssssssssssssss-removebg-preview (2).png',
+          fit: BoxFit.scaleDown,
+          width: 200,
+          height: 100,),
+      ),
       const Text(
         '2024-2025 Tecnologia Universal \u00A9', // \u00A9 representa el símbolo de derechos de autor
         style: TextStyle(fontSize: 18.0),
         textAlign: TextAlign.center,
+        
       ),
     ],
   ),

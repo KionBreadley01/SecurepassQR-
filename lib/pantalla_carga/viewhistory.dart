@@ -89,7 +89,7 @@ class ViewHistory extends StatelessWidget {
                 if (isAdmin) // Solo muestra la opción si el usuario es administrador
                   ListTile(
                     leading: const Icon(Icons.person_add),
-                    title: const Text('Regritro de usuarios'),
+                    title: const Text('Regristro de usuarios'),
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
@@ -154,19 +154,63 @@ class ViewHistory extends StatelessWidget {
           ],
         ),
       ),
-      appBar: AppBar(
-        title: const Text(
-          'Historial de Accesos ',
-          textAlign: TextAlign.center,
+appBar: AppBar(
+  title: StreamBuilder<DocumentSnapshot>(
+    stream: FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .snapshots(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const CircularProgressIndicator();
+      }
+      if (snapshot.hasError || !snapshot.hasData) {
+        return const Text(
+          'Error al cargar el usuario',
           style: TextStyle(
-              color: Colors.white, fontSize: 24.0, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: const Color.fromARGB(255, 224, 119, 208),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(30.0),
-          child: Container(
+            color: Colors.white,
+            fontSize: 24.0,
+            fontWeight: FontWeight.bold,
+          ),
+        );
+      }
+      final userData = snapshot.data!;
+      final email = userData['email'];
+      return Column(
+        children: [
+          const Text(
+            'Historial de Accesos de los Alumnos',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 19.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8), // Espacio entre los textos
+          Text(
+            'Historial de $email',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18.0,
+            ),
+          ),
+        ],
+      );
+    },
+  ),
+  backgroundColor: const Color.fromARGB(255, 224, 119, 208),
+),
+
+
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
             alignment: Alignment.center,
-            padding: const EdgeInsets.only(bottom: 8.0),
+            color: const Color.fromARGB(255, 224, 119, 208),
+            padding: const EdgeInsets.all(8.0),
             child: const Text(
               'Por favor, regrese a la pestaña de Historial de Accesos si no se han registrado nuevas entradas.',
               style: TextStyle(
@@ -176,84 +220,78 @@ class ViewHistory extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
-        ),
-      ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: isAdmin
-            ? FirebaseFirestore.instance
-                .collection('admin_user')
-                .doc(FirebaseAuth.instance.currentUser!.uid)
-                .collection('access_history')
-                .orderBy('date', descending: true)
-                .snapshots()
-            : FirebaseFirestore.instance
-                .collection('users')
-                .doc(FirebaseAuth.instance.currentUser!.uid)
-                .collection('access_history')
-                .orderBy('date', descending: true)
-                .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (snapshot.hasError) {
-            return const Center(
-              child: Text('Error al cargar el historial de accesos.'),
-            );
-          }
-          final documents = snapshot.data!.docs;
-          Map<DateTime, List<DocumentSnapshot>> groupedByDate =
-              groupByDate(documents);
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(userId)
+                  .collection('access_history')
+                  .orderBy('date', descending: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (snapshot.hasError) {
+                  return const Center(
+                    child: Text('Error al cargar el historial de accesos.'),
+                  );
+                }
+                final documents = snapshot.data!.docs;
+                Map<DateTime, List<DocumentSnapshot>> groupedByDate =
+                    groupByDate(documents);
 
-          return ListView.builder(
-            itemCount: groupedByDate.length,
-            itemBuilder: (context, index) {
-              DateTime date = groupedByDate.keys.elementAt(index);
-              List<DocumentSnapshot> accesses = groupedByDate[date]!;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      DateFormat('yyyy-MM-dd').format(date),
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: accesses.length,
-                    itemBuilder: (context, index) {
-                      final access = accesses[index];
-                      final date = access['date'].toDate();
-                      return Card(
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 16.0),
-                        child: ListTile(
-                          title: Text(
-                              'Fecha y Hora: ${DateFormat('yyyy-MM-dd HH:mm').format(date)}'),
-                          subtitle: Text('Ubicación: ${access['location']}'),
+                return ListView.builder(
+                  itemCount: groupedByDate.length,
+                  itemBuilder: (context, index) {
+                    DateTime date = groupedByDate.keys.elementAt(index);
+                    List<DocumentSnapshot> accesses = groupedByDate[date]!;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            DateFormat('yyyy-MM-dd').format(date),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
-                      );
-                    },
-                  ),
-                ],
-              );
-            },
-          );
-        },
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: accesses.length,
+                          itemBuilder: (context, index) {
+                            final access = accesses[index];
+                            final date = access['date'].toDate();
+                            return Card(
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 8.0, horizontal: 16.0),
+                              child: ListTile(
+                                title: Text(
+                                    'Fecha y Hora: ${DateFormat('yyyy-MM-dd HH:mm').format(date)}'),
+                                subtitle: Text('Ubicación: ${access['location']}'),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Map<DateTime, List<DocumentSnapshot>> groupByDate(
-      List<DocumentSnapshot> documents) {
+  Map<DateTime, List<DocumentSnapshot>> groupByDate(List<DocumentSnapshot> documents) {
     Map<DateTime, List<DocumentSnapshot>> groupedByDate = {};
 
     documents.forEach((document) {
